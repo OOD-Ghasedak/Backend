@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13.6-bullseye
+    environment:
+      POSTGRES_DB: ghasedak
+      POSTGRES_USER: ghasedak
+      POSTGRES_PASSWORD: Password
+    ports:
+      - "5432:5432"
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+volumes:
+  db_data:
