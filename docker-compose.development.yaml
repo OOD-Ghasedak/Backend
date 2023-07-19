@@ -6,10 +6,8 @@ services:
     environment:
       POSTGRES_DB: ghasedak
       POSTGRES_USER: ghasedak
-      POSTGRES_PASSWORD: Password
+      POSTGRES_PASSWORD: ghasedak
     ports:
-      - "5432:5432"
+      - "5499:5432"
     volumes:
-      - "db_data:/var/lib/postgresql/data"
-volumes:
-  db_data:
+      - "/home/postgres/ghasedak:/var/lib/postgresql/data"
