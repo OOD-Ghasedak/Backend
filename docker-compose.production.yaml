@@ -5,11 +5,12 @@ services:
     build:
       context: .
     environment:
+      DB_ENGINE: django.db.backends.postgresql
       DB_HOST: db
       DB_PORT: "5432"
       DB_NAME: ghasedak
       DB_USER: ghasedak
-      DB_PASSWORD: Password
+      DB_PASSWORD: ghasedak
       DJANGO_SECRET_KEY: "django-insecure-xf787mwonq2s5*i%npk!-tqu8qgsn_g0fe*%vgsrfel7zvr_s1"
     command: ['runserver', '0.0.0.0:8000']
     ports:
@@ -25,7 +26,7 @@ services:
     environment:
       POSTGRES_DB: ghasedak
       POSTGRES_USER: ghasedak
-      POSTGRES_PASSWORD: Password
+      POSTGRES_PASSWORD: ghasedak
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ghasedak" ]
       interval: 5s
@@ -33,7 +34,6 @@ services:
       retries: 5
     volumes:
       - "db_data:/var/lib/postgresql/data"
-
 
 volumes:
   db_data:
