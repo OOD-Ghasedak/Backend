@@ -33,6 +33,7 @@ TEST, DEVELOPMENT, PRODUCTION = [False] * 3
 # Application definition
 
 CUSTOM_APPS = [
+    'utility',
     'accounts',
     'financial',
     'channels',
