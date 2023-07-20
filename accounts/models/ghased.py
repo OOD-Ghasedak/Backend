@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from accounts.jwt import JWTAccountInterface
 from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
 
 
-class Ghased(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
+class Ghased(JWTAccountInterface, CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
     user = models.OneToOneField(
         to=get_user_model(),
         related_name='ghased',
