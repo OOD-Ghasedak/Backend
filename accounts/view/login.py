@@ -11,7 +11,6 @@ class GhasedLoginView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = GhasedLoginSerializer(data=request.data)
-        print(serializer)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
         account = Ghased.objects.get(user__username=validated_data['username'])

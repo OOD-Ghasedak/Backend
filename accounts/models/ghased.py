@@ -13,6 +13,12 @@ class Ghased(JWTAccountInterface, CreateHistoryModelMixin, SoftDeleteModelMixin,
         verbose_name='کاربر جنگو'
     )
 
+    phone_number = models.CharField(
+        max_length=13,
+        verbose_name='شماره همراه',
+        unique=True,
+    )
+
     class Meta:
         verbose_name = 'قاصد'
         verbose_name_plural = 'قاصدها'
