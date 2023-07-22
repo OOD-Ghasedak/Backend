@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db import transaction
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -22,15 +21,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 class GhasedSignupSerializer(ModelSerializer):
     username = serializers.CharField(max_length=50)
+    phone_number = serializers.CharField(max_length=11)
     email = serializers.EmailField()
     password = serializers.CharField(max_length=128)
 
     def create(self, validated_data):
+        phone_number = validated_data.pop('phone_number')
         user_serializer = UserSerializer(data=validated_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
-        ghased = Ghased.objects.create(user=user)
+        ghased = Ghased.objects.create(user=user, phone_number=phone_number)
         return ghased
+
+    def validate_phone_number(self, value):
+        if len(value) != 11:
+            raise serializers.ValidationError("phone_number is not valid format")
+        # todo: other checks if needed
+        return value
 
     class Meta:
         model = Ghased
@@ -38,4 +45,5 @@ class GhasedSignupSerializer(ModelSerializer):
             'username',
             'email',
             'password',
+            'phone_number',
         ]
