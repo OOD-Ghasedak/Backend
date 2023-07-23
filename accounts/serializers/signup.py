@@ -5,7 +5,7 @@ from accounts.models.services.ghased_creation import GhasedCreatorConfigurer, Gh
 from utility.django import GhasedakMobileNumberValidator
 
 
-class GhasedSignupSerializer(serializers.Serializer):
+class GhasedSignUpSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=50)
     phone_number = serializers.CharField(max_length=11, validators=[GhasedakMobileNumberValidator(
         message='شماره همراه باید ۱۱ رقمی باشد و با ۰۹ آغاز گردد.'

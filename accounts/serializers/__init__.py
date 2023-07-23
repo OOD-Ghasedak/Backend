@@ -1,2 +1,2 @@
 from .login import GhasedLoginSerializer
-from .signup import GhasedSignupSerializer
+from .signup import GhasedSignUpSerializer
