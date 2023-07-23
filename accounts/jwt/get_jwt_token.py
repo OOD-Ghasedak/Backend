@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
 
 def get_jwt_token(ghased: 'Ghased') -> Tuple[str, str]:
     token = RefreshToken.for_user(ghased.user)
-    for claim_key, claim_val in ghased.get_jwt_claims().items():
+    for claim_key, claim_val in ghased.jwt_claims_helper.get_jwt_claims().items():
         token[claim_key] = claim_val
     refresh, access = str(token), str(token.access_token)
     return refresh, access

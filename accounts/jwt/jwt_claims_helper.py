@@ -1,10 +1,13 @@
+from typing import Union, List, Tuple
 
-class JWTAccountInterface:
+from rest_framework.fields import get_attribute
 
-    jwt_claim_keys = []
 
-    def get_jwt_claim_keys(self):
-        return self.jwt_claim_keys
+class JWTClaimsHelper:
+
+    def __init__(self, user, jwt_claim_keys: List[Union[str, Tuple[str, str]]]):
+        self.user = user
+        self.jwt_claim_keys = jwt_claim_keys
 
     def get_jwt_claims(self):
         claims = dict()
@@ -15,5 +18,5 @@ class JWTAccountInterface:
                 field_name, claim_key = claim_key, claim_key
             else:
                 raise ValueError('claim key must be a <field_name, claim_key> tuple or an instance of str')
-            claims[claim_key] = getattr(self, field_name)
+            claims[claim_key] = get_attribute(self.user, field_name)
         return claims
