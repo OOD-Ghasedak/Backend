@@ -20,7 +20,7 @@ class GhasedCreatorInterface(ABC):
         pass
 
 
-class BaseGhasedCreator(GhasedCreatorInterface):
+class BaseGhasedCreator(GhasedCreatorInterface, ABC):
 
     def __init__(self, ghased_data: GhasedData, wallet_creator_class: Type[WalletCreatorInterface]):
         self.ghased_data = ghased_data
@@ -46,8 +46,9 @@ class BaseGhasedCreator(GhasedCreatorInterface):
     def create_wallet(self, ghased: Ghased):
         return self.wallet_creator_class(ghased).create()
 
+    @abstractmethod
     def create_ghased(self, user):
-        raise NotImplementedError
+        pass
 
 
 class SignUpGhasedCreator(BaseGhasedCreator):
