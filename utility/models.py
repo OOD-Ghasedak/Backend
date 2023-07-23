@@ -1,6 +1,3 @@
-from enum import Enum
-from typing import Type
-
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import QuerySet

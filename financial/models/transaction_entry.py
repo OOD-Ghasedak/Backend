@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 
 from utility.models import CreateHistoryModelMixin, CreationSensitiveModelMixin, BaseModel
 
@@ -19,8 +20,8 @@ class TransactionEntry(CreateHistoryModelMixin, CreationSensitiveModelMixin, Bas
     )
     amount = models.PositiveBigIntegerField(verbose_name='مقدار')
 
-    def before_create(self):
-        self.wallet.balance += self.amount
+    def after_create(self):
+        self.wallet.__class__.objects.update(balance=F('balance') + self.amount)
 
     class Meta:
         verbose_name = 'ورودی کیف‌ پول'
