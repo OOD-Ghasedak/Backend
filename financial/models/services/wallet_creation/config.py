@@ -2,7 +2,7 @@ from enum import Enum
 
 from financial.models.services.wallet_creation import WalletCreatorInterface
 from financial.models.services.wallet_creation.creator import GhasedCreationWalletCreator
-from utility.services import Configurer, T
+from utility.services import Configurer
 
 
 class WalletCreatorConfigurer(Configurer[WalletCreatorInterface]):
@@ -17,5 +17,5 @@ class WalletCreatorConfigurer(Configurer[WalletCreatorInterface]):
             self.Sources.GHASED_CREATION: GhasedCreationWalletCreator,
         }[self.source]
 
-    def configure(self, *args, **kwargs) -> T:
+    def configure(self, *args, **kwargs):
         raise NotImplementedError
