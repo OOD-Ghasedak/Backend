@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import Sum
 
-from financial.models.exceptions import InvalidBalance
 from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, BaseModel
 
 
@@ -36,3 +35,10 @@ class Wallet(CreateHistoryModelMixin, UpdateHistoryModelMixin, BaseModel):
     class Meta:
         verbose_name = 'کیف پول'
         verbose_name_plural = 'کیف پول‌ها'
+
+
+class InvalidBalance(Wallet.Exception):
+    def __init__(self, wallet, balance, actual_balance):
+        super(InvalidBalance, self).__init__(
+            f'wallet {wallet.id} has balance {balance} but it must have {actual_balance}',
+        )

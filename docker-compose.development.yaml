@@ -8,6 +8,6 @@ services:
       POSTGRES_USER: ghasedak
       POSTGRES_PASSWORD: Password
     ports:
-      - "5432:5432"
+      - "5499:5432"
     volumes:
       - "/home/postgres/ghasedak:/var/lib/postgresql/data"
