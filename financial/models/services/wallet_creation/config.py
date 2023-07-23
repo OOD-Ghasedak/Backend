@@ -1,7 +1,7 @@
 from enum import Enum
 
 from financial.models.services.wallet_creation import WalletCreatorInterface
-from financial.models.services.wallet_creation.creator import GhasedCreationWalletCreator
+from financial.models.services.wallet_creation.creator import GhasedWalletCreator
 from utility.services import Configurer
 
 
@@ -14,7 +14,7 @@ class WalletCreatorConfigurer(Configurer[WalletCreatorInterface]):
 
     def configure_class(self):
         return {
-            self.Sources.GHASED_CREATION: GhasedCreationWalletCreator,
+            self.Sources.GHASED_CREATION: GhasedWalletCreator,
         }[self.source]
 
     def configure(self, *args, **kwargs):
