@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 services:
   ghasedak:
@@ -17,9 +17,6 @@ services:
       - "8000:8000"
     volumes:
       - ".:/src/"
-    depends_on:
-      db:
-        condition: service_healthy
 
   db:
     image: postgres:13.6-bullseye
