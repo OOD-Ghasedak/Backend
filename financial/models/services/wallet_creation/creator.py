@@ -16,7 +16,7 @@ class WalletCreatorInterface(ABC):
         pass
 
 
-class GhasedCreationWalletCreator(WalletCreatorInterface):
+class GhasedWalletCreator(WalletCreatorInterface):
     def create(self) -> Wallet:
         return Wallet.objects.create(
             ghased=self.__ghased,
