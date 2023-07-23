@@ -1,10 +1,9 @@
 from enum import Enum
-from typing import Type
 
 from accounts.models.services.ghased_creation import GhasedCreatorInterface
 from accounts.models.services.ghased_creation.required_data import GhasedData
 from financial.models.services.wallet_creation import WalletCreatorConfigurer
-from utility.services import Configurer, T
+from utility.services import Configurer
 
 
 class GhasedCreatorConfigurer(Configurer[GhasedCreatorInterface]):
@@ -14,7 +13,7 @@ class GhasedCreatorConfigurer(Configurer[GhasedCreatorInterface]):
     def __init__(self, source: Sources):
         self.source = source
 
-    def configure_class(self) -> Type[T]:
+    def configure_class(self):
         raise NotImplementedError
 
     def configure(self, ghased_data: GhasedData):
