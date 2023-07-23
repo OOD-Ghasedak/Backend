@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 class WalletCreatorInterface(ABC):
     def __init__(self, ghased: "Ghased"):
-        self.__ghased = ghased
+        self.ghased = ghased
 
     @abstractmethod
     def create(self) -> Wallet:
@@ -19,5 +19,5 @@ class WalletCreatorInterface(ABC):
 class GhasedWalletCreator(WalletCreatorInterface):
     def create(self) -> Wallet:
         return Wallet.objects.create(
-            ghased=self.__ghased,
+            ghased=self.ghased,
         )

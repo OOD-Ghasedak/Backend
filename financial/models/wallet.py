@@ -25,7 +25,7 @@ class Wallet(CreateHistoryModelMixin, UpdateHistoryModelMixin, BaseModel):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, check_balance=True):
-        is_balance_being_changed = update_fields is None or 'balance' in update_fields
+        is_balance_being_changed = self.pk and (update_fields is None or 'balance' in update_fields)
         if check_balance and is_balance_being_changed:
             actual_balance = self._actual_balance()
             if self.balance != actual_balance:

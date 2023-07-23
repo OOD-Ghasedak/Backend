@@ -18,5 +18,5 @@ class JWTClaimsHelper:
                 field_name, claim_key = claim_key, claim_key
             else:
                 raise ValueError('claim key must be a <field_name, claim_key> tuple or an instance of str')
-            claims[claim_key] = get_attribute(self.user, field_name)
+            claims[claim_key] = get_attribute(self.user, field_name.split('.'))
         return claims
