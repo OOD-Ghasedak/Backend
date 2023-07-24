@@ -24,19 +24,25 @@ class ChannelSerializer(BaseChannelSerializer):
     pass
 
 
+class ChannelCreateSerializer(BaseChannelSerializer):
+    pass
+
+
 class ChannelSerializerConfigurer(Configurer[BaseChannelSerializer]):
     class Mode(Enum):
         FULL = 'full'
         SUMMARY = 'summary'
+        CREATE = 'create'
 
     def __init__(self, mode: Mode):
         self.mode = mode
 
     def configure_class(self):
-        raise NotImplementedError
-
-    def configure(self, channel: Channel):
         return {
             self.Mode.FULL: ChannelSerializer,
-            self.Mode.SUMMARY: ChannelSummarySerializer
-        }[self.mode](instance=channel)
+            self.Mode.SUMMARY: ChannelSummarySerializer,
+            self.Mode.CREATE: ChannelCreateSerializer,
+        }[self.mode]
+
+    def configure(self, channel: Channel):
+        return self.configure_class()(instance=channel)
