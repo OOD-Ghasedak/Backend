@@ -24,11 +24,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path(r'_nested_admin/', include('nested_admin.urls')), # TODO: add it when nested admin is used
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/account/', include('accounts.urls')),
-    path('api/account/', include('financial.urls')),
-    path('api/account/', include('channels.urls')),
-    path('api/account/', include('channel_management.urls')),
-    path('api/account/', include('subscribe.urls')),
+    path('api/accounts/', include('accounts.urls')),
+    path('api/financial/', include('financial.urls')),
+    path('api/channels/', include('channels.urls')),
+    path('api/channel_management/', include('channel_management.urls')),
+    path('api/subscribe/', include('subscribe.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
