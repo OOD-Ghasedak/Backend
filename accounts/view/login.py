@@ -2,9 +2,8 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework.views import APIView
 
-from accounts.jwt import get_jwt_token
 from accounts.models import Ghased
-from accounts.serializers import GhasedLoginSerializer
+from accounts.view.serializers import GhasedLoginSerializer
 
 
 class GhasedLoginView(APIView):
@@ -13,8 +12,8 @@ class GhasedLoginView(APIView):
         serializer = GhasedLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
-        account = Ghased.objects.get(user__username=validated_data['username'])
-        refresh, access = get_jwt_token(account)
+        ghased = Ghased.objects.get(user__username=validated_data['username'])
+        refresh, access = ghased.get_jwt_tokens()
         return Response(data={
             'access_token': access,
             'refresh_token': refresh

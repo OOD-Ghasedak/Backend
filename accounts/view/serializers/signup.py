@@ -1,16 +1,9 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from accounts.models import Ghased
 from accounts.models.services.ghased_creation import GhasedCreatorConfigurer, GhasedData, GhasedCreatorInterface
-from utility.django import GhasedakMobileNumberValidator
+from accounts.view.serializers import UserSerializerFactory
 from utility.functions import get_dict_subset
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = ['email', 'password', 'username']
 
 
 class GhasedSignUpSerializer(serializers.ModelSerializer):
@@ -19,7 +12,9 @@ class GhasedSignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128)
 
     def create(self, validated_data) -> Ghased:
-        user = UserSerializer(data=get_dict_subset(validated_data, UserSerializer.Meta.fields))
+        user = UserSerializerFactory(self.Meta.user_fields).get_serializer()(
+            data=get_dict_subset(validated_data, self.Meta.user_fields)
+        )
         user.is_valid(raise_exception=True)
         creator: GhasedCreatorInterface = GhasedCreatorConfigurer(GhasedCreatorConfigurer.Sources.SIGN_UP).configure(
             GhasedData(**validated_data)
@@ -38,4 +33,5 @@ class GhasedSignUpSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ghased
-        fields = ['username', 'email', 'phone_number', 'password']
+        user_fields = ['username', 'email', 'password']
+        fields = [user_fields, 'phone_number', ]
