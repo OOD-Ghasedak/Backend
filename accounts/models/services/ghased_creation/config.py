@@ -2,7 +2,6 @@ from enum import Enum
 
 from accounts.models.services.ghased_creation import GhasedCreatorInterface
 from accounts.models.services.ghased_creation.required_data import GhasedData
-from financial.models.services.wallet_creation import WalletCreatorConfigurer
 from utility.services import Configurer
 
 
@@ -18,9 +17,6 @@ class GhasedCreatorConfigurer(Configurer[GhasedCreatorInterface]):
 
     def configure(self, ghased_data: GhasedData):
         from accounts.models.services.ghased_creation.creator import SignUpGhasedCreator
-        wallet_creator_class = WalletCreatorConfigurer(
-            WalletCreatorConfigurer.Sources.GHASED_CREATION
-        ).configure_class()
         return {
             self.Sources.SIGN_UP: SignUpGhasedCreator,
-        }[self.source](ghased_data, wallet_creator_class)
+        }[self.source](ghased_data)

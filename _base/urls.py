@@ -27,7 +27,7 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/financial/', include('financial.urls')),
     path('api/channels/', include('channels.urls')),
-    path('api/channel_management/', include('channel_management.urls')),
+    path('api/channel-management/', include('channel_management.urls')),
     path('api/subscribe/', include('subscribe.urls')),
 ]
 

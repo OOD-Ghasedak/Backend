@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
 
@@ -23,7 +24,7 @@ class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteM
                 (cls.TWELVE_MONTH, cls.TWELVE_MONTH_FA),
             )
 
-    duration = models.CharField(
+    duration_choice = models.CharField(
         max_length=128,
         choices=DurationChoices.get_choices(),
         verbose_name='دوره',
@@ -35,6 +36,15 @@ class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteM
         verbose_name='کانال',
         on_delete=models.PROTECT,
     )
+
+    @property
+    def duration(self):
+        return {
+            self.DurationChoices.ONE_MONTH: timezone.timedelta(days=30),
+            self.DurationChoices.THREE_MONTH: timezone.timedelta(days=3 * 30),
+            self.DurationChoices.SIX_MONTH: timezone.timedelta(days=6 * 30),
+            self.DurationChoices.TWELVE_MONTH: timezone.timedelta(days=12 * 30),
+        }[self.duration_choice]
 
     class Meta:
         verbose_name = 'اشتراک'

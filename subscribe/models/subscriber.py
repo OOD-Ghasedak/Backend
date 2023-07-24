@@ -1,11 +1,10 @@
 from django.db import models
 from django.db.models import UniqueConstraint, Q
 
-from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
+from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel, CreationSensitiveModelMixin
 
 
-class Subscriber(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
-
+class Subscriber(CreateHistoryModelMixin, SoftDeleteModelMixin, CreationSensitiveModelMixin, BaseModel):
     channel = models.ForeignKey(
         to='channels.Channel',
         related_name='subscribers',
@@ -19,6 +18,10 @@ class Subscriber(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
         verbose_name='قاصد',
         on_delete=models.PROTECT,
     )
+
+    def after_create(self):
+        from subscribe.models import SubscriptionStatus
+        SubscriptionStatus.objects.create(subscriber=self)
 
     class Meta:
         constraints = (

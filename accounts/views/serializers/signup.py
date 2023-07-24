@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from rest_framework import serializers
 
 from accounts.models import Ghased
@@ -25,11 +27,11 @@ class GhasedSignUpSerializer(serializers.ModelSerializer):
         raise NotImplementedError
 
     def to_representation(self, instance: Ghased):
-        return {
+        return OrderedDict({
             'username': instance.user.username,
             'email': instance.user.email,
             'phone_number': instance.user.phone_number,
-        }
+        })
 
     class Meta:
         model = Ghased
