@@ -1,7 +1,9 @@
+from typing import Tuple
+
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from accounts.jwt import JWTClaimsHelper
+from accounts.models.services.jwt import GhasedJWTHelper
 from utility.django import GhasedakMobileNumberValidator
 from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
 
@@ -21,16 +23,8 @@ class Ghased(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
         validators=[GhasedakMobileNumberValidator()]
     )
 
-    @property
-    def jwt_claims_helper(self) -> JWTClaimsHelper:
-        return JWTClaimsHelper(
-            self,
-            [
-                ('id', 'ghased_id'),
-                ('user.id', 'user_id'),
-                'phone_number',
-            ]
-        )
+    def get_jwt_tokens(self) -> Tuple[str, str]:
+        return GhasedJWTHelper(self).get_jwt_tokens()
 
     class Meta:
         verbose_name = 'قاصد'
