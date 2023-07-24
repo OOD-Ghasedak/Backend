@@ -1,12 +1,11 @@
 from django.db import models
-from django.db.models import UniqueConstraint, Q
 
-from utility.models import BaseModel, CreateHistoryModelMixin, SoftDeleteModelMixin
+from utility.models import BaseModel, CreateHistoryModelMixin, CreationSensitiveModelMixin
 
 
-class PurchasedSubscription(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
+class PurchasedSubscription(CreateHistoryModelMixin, CreationSensitiveModelMixin, BaseModel):
     subscription = models.ForeignKey(
-        to='channels.subscription',
+        to='channels.Subscription',
         related_name='purchased_subscriptions',
         on_delete=models.PROTECT,
         verbose_name='اشتراک',
@@ -19,16 +18,11 @@ class PurchasedSubscription(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseM
         verbose_name='عضو کانال',
     )
 
-    expires_at = models.DateTimeField(
-        verbose_name='زمان انقضا',
-    )
+    def after_create(self):
+        status = self.subscriber.subscription_status
+        status.expires_at += self.subscription.duration
+        status.save(update_fields=['expires_at'])
 
     class Meta:
-        constraints = (
-            UniqueConstraint(
-                fields=('subscriber', 'subscription'), condition=Q(is_deleted=False),
-                name='unique_purchased_subscription_if_not_deleted',
-            ),
-        )
         verbose_name = 'عضو کانال'
         verbose_name_plural = 'اعضای کانال‌ها'

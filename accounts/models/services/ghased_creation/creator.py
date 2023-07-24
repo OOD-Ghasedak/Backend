@@ -6,13 +6,15 @@ from django.db import transaction
 
 from accounts.models import Ghased
 from accounts.models.services.ghased_creation.required_data import GhasedData
+from financial._ports.services import ServicesFacade as FinancialServicesFacade
 from financial.models.services.wallet_creation import WalletCreatorInterface
 
 
 class GhasedCreatorInterface(ABC):
+    wallet_creator_class: Type[WalletCreatorInterface]
 
     @abstractmethod
-    def __init__(self, ghased_data: GhasedData, wallet_creator_class: Type[WalletCreatorInterface]):
+    def __init__(self, ghased_data: GhasedData):
         pass
 
     @abstractmethod
@@ -22,9 +24,8 @@ class GhasedCreatorInterface(ABC):
 
 class BaseGhasedCreator(GhasedCreatorInterface, ABC):
 
-    def __init__(self, ghased_data: GhasedData, wallet_creator_class: Type[WalletCreatorInterface]):
+    def __init__(self, ghased_data: GhasedData):
         self.ghased_data = ghased_data
-        self.wallet_creator_class = wallet_creator_class
 
     def create(self) -> Ghased:
         with transaction.atomic():
@@ -52,6 +53,10 @@ class BaseGhasedCreator(GhasedCreatorInterface, ABC):
 
 
 class SignUpGhasedCreator(BaseGhasedCreator):
+    wallet_creator_class: Type[
+        WalletCreatorInterface
+    ] = FinancialServicesFacade.get_instance().get_wallet_creator_for_ghased_creation()
+
     def create_ghased(self, user):
         return Ghased.objects.create(
             user=user,
