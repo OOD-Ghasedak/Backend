@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from accounts.models import Ghased
-from accounts.view.serializers import UserSerializerFactory
+from accounts.views.serializers import UserSerializerFactory
 from utility.functions import get_dict_subset
 
 

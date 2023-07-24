@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import Ghased
 from accounts.models.services.ghased_creation import GhasedCreatorConfigurer, GhasedData, GhasedCreatorInterface
-from accounts.view.serializers import UserSerializerFactory
+from accounts.views.serializers import UserSerializerFactory
 from utility.functions import get_dict_subset
 
 
