@@ -13,6 +13,8 @@ services:
       DB_PASSWORD: ghasedak
       SECRET_KEY: "django-insecure-xf787mwonq2s5*i%npk!-tqu8qgsn_g0fe*%vgsrfel7zvr_s1"
     command: ['runserver', '0.0.0.0:8000']
+    depends_on:
+      - db
     ports:
       - "8000:8000"
     volumes:
