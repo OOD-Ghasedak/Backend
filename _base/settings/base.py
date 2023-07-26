@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import config
@@ -32,6 +33,11 @@ TEST, DEVELOPMENT, PRODUCTION = [False] * 3
 
 # Application definition
 
+EXTERNAL_PACKAGES = [
+    'rest_framework',
+    'corsheaders',
+]
+
 CUSTOM_APPS = [
     'utility',
     'accounts',
@@ -48,8 +54,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "corsheaders",
 
+    *EXTERNAL_PACKAGES,
     *CUSTOM_APPS,
 
 ]
@@ -84,6 +90,30 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "_base.wsgi.application"
+
+# DRF
+# https://www.django-rest-framework.org/
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+# Simple JWT
+# https://django-rest-framework-simplejwt.readthedocs.io/en/latest/settings.html
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=config('ACCESS_TOKEN_LIFETIME_MINUTES', cast=int)),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=config('REFRESH_TOKEN_LIFETIME_DAYS', cast=int)),
+    'ROTATE_REFRESH_TOKENS': True,
+    'ALGORITHM': 'HS512',
+    'SIGNING_KEY': config('JWT_PRIVATE_KEY'),
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

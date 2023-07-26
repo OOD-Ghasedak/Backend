@@ -8,6 +8,7 @@ from utility.services import Configurer
 class GhasedCreatorConfigurer(Configurer[GhasedCreatorInterface]):
     class Sources(Enum):
         SIGN_UP = 'sign up'
+        TEST = 'test'
 
     def __init__(self, source: Sources):
         self.source = source
@@ -19,4 +20,5 @@ class GhasedCreatorConfigurer(Configurer[GhasedCreatorInterface]):
         from accounts.models.services.ghased_creation.creator import SignUpGhasedCreator
         return {
             self.Sources.SIGN_UP: SignUpGhasedCreator,
+            self.Sources.TEST: SignUpGhasedCreator,  # TODO: Change this when needed.
         }[self.source](ghased_data)
