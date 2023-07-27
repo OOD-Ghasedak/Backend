@@ -1,39 +1,23 @@
-version: '3.8'
+version: '3.3'
 
 services:
   ghasedak:
     build:
       context: .
-    environment:
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_NAME: ghasedak
-      DB_USER: ghasedak
-      DB_PASSWORD: Password
-      DJANGO_SECRET_KEY: "django-insecure-xf787mwonq2s5*i%npk!-tqu8qgsn_g0fe*%vgsrfel7zvr_s1"
     command: ['runserver', '0.0.0.0:8000']
+    depends_on:
+      - db
     ports:
       - "8000:8000"
     volumes:
       - ".:/src/"
-    depends_on:
-      db:
-        condition: service_healthy
 
   db:
     image: postgres:13.6-bullseye
-    environment:
-      POSTGRES_DB: ghasedak
-      POSTGRES_USER: ghasedak
-      POSTGRES_PASSWORD: Password
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ghasedak" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    ports:
+      - "5432:5432"
     volumes:
       - "db_data:/var/lib/postgresql/data"
-
 
 volumes:
   db_data:
