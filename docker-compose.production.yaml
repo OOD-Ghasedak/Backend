@@ -14,10 +14,6 @@ services:
 
   db:
     image: postgres:13.6-bullseye
-    environment:
-      POSTGRES_DB: ghasedak
-      POSTGRES_USER: ghasedak
-      POSTGRES_PASSWORD: ghasedak
     ports:
       - "5432:5432"
     volumes:
