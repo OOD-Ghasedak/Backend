@@ -4,14 +4,6 @@ services:
   ghasedak:
     build:
       context: .
-    environment:
-      DB_ENGINE: django.db.backends.postgresql
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_NAME: ghasedak
-      DB_USER: ghasedak
-      DB_PASSWORD: ghasedak
-      SECRET_KEY: "django-insecure-xf787mwonq2s5*i%npk!-tqu8qgsn_g0fe*%vgsrfel7zvr_s1"
     command: ['runserver', '0.0.0.0:8000']
     depends_on:
       - db
