@@ -14,6 +14,10 @@ then bring up postgres using docker-compose with below command:
 ```
 docker-compose -f docker-compose.development.yaml up --build
 ```
+then export mandatory variables:
+```
+export DB_ENGINE="django.db.backends.postgresql" SECRET_KEY="some-key" DB_NAME="ghasedak" DB_PASSWORD="Password" DB_USER="ghasedak" DB_PORT="5432" DB_HOST="localhost"
+```
 after that run django server locally using below command:
 ```
 ./manage.py runserver
