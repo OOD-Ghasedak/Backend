@@ -1,4 +1,4 @@
-name: Push
+name: Push and Deploy
 on:
   push:
     branches:
@@ -43,4 +43,4 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy
-        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} docker ps
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} docker-compose -f /home/compute/ghasedak/Backend/docker-compose.production.yaml up --build -d
