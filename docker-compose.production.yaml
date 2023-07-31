@@ -2,8 +2,7 @@ version: '3.3'
 
 services:
   ghasedak:
-    build:
-      context: .
+    image: ghcr.io/ood-ghasedak/backend:latest
     command: ['runserver', '0.0.0.0:8000']
     depends_on:
       - db
