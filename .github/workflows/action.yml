@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    needs: [tests]
+    needs: [push]
     steps:
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
