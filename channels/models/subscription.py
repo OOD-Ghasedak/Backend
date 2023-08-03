@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint, Q
 from django.utils import timezone
 
 from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
@@ -19,8 +20,8 @@ class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteM
         def get_choices(cls):
             return (
                 (cls.ONE_MONTH, cls.ONE_MONTH_FA),
-                (cls.THREE_MONTH, cls.THREE_MONTH),
-                (cls.SIX_MONTH, cls.SIX_MONTH),
+                (cls.THREE_MONTH, cls.THREE_MONTH_FA),
+                (cls.SIX_MONTH, cls.SIX_MONTH_FA),
                 (cls.TWELVE_MONTH, cls.TWELVE_MONTH_FA),
             )
 
@@ -37,6 +38,10 @@ class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteM
         on_delete=models.PROTECT,
     )
 
+    price = models.PositiveBigIntegerField(
+        verbose_name='قیمت اشتراک',
+    )
+
     @property
     def duration(self):
         return {
@@ -47,5 +52,11 @@ class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteM
         }[self.duration_choice]
 
     class Meta:
+        constraints = (
+            UniqueConstraint(
+                fields=('channel', 'duration_choice'), condition=Q(is_deleted=False),
+                name='unique_duration_for_channel',
+            ),
+        )
         verbose_name = 'اشتراک'
         verbose_name_plural = 'اشتراک‌های کانال‌ها'
