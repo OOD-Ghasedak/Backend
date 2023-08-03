@@ -14,6 +14,7 @@ from .base import (
     BaseModel,
 )
 from .fields import (
+    GhasedakPhoneNumberField,
     LocationCordinationField,
     PositiveFloatField,
     PercentageField,
