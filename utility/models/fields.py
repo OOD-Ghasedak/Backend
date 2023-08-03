@@ -1,6 +1,20 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from utility.django import GhasedakMobileNumberValidator
+
+
+def GhasedakPhoneNumberField(**kwargs):
+    defaults = dict(
+        max_length=32,
+        validators=[GhasedakMobileNumberValidator()],
+        verbose_name='شماره همراه',
+    )
+    defaults.update(kwargs)
+    return models.CharField(
+        **defaults,
+    )
+
 
 def LocationCordinationField(**kwargs):
     """
@@ -17,7 +31,7 @@ def LocationCordinationField(**kwargs):
     )
     defaults.update(kwargs)
     return models.DecimalField(
-        defaults
+        **defaults
     )
 
 
