@@ -1,1 +1,2 @@
-from .channel import BaseChannelSerializer, ChannelSerializerConfigurer
+from .channels import BaseChannelSerializer, ChannelSerializerConfigurer
+from .subscriptions import OwnerSubscriptionSerializer
