@@ -1,1 +1,1 @@
-from .wallet import WalletView
+from .wallet import WalletView, DepositView
