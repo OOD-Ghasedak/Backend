@@ -35,7 +35,7 @@ class SoftDeleteModelMixin(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         self.is_deleted = True
-        self.save()
+        self.save(update_fields=['is_deleted'])
 
     def hard_delete(self, using=None, keep_parents=False):
         super().delete(using, keep_parents)
