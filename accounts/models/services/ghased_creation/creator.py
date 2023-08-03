@@ -4,7 +4,7 @@ from typing import Type
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-from accounts.models import Ghased
+from accounts.models import Ghased, RegisterOTP
 from accounts.models.services.ghased_creation.required_data import GhasedData
 from financial._ports.services import ServicesFacade as FinancialServicesFacade
 from financial.models.services.wallet_creation import WalletCreatorInterface
@@ -12,10 +12,6 @@ from financial.models.services.wallet_creation import WalletCreatorInterface
 
 class GhasedCreatorInterface(ABC):
     wallet_creator_class: Type[WalletCreatorInterface]
-
-    @abstractmethod
-    def __init__(self, ghased_data: GhasedData):
-        pass
 
     @abstractmethod
     def create(self) -> Ghased:
@@ -47,9 +43,11 @@ class BaseGhasedCreator(GhasedCreatorInterface, ABC):
     def create_wallet(self, ghased: Ghased):
         return self.wallet_creator_class(ghased).create()
 
-    @abstractmethod
     def create_ghased(self, user):
-        pass
+        return Ghased.objects.create(
+            user=user,
+            phone_number=self.ghased_data.phone_number,
+        )
 
 
 class SignUpGhasedCreator(BaseGhasedCreator):
@@ -57,8 +55,22 @@ class SignUpGhasedCreator(BaseGhasedCreator):
         WalletCreatorInterface
     ] = FinancialServicesFacade.get_instance().get_wallet_creator_for_ghased_creation()
 
-    def create_ghased(self, user):
-        return Ghased.objects.create(
-            user=user,
-            phone_number=self.ghased_data.phone_number,
-        )
+    def __init__(self, username, password, register_otp: RegisterOTP):
+        self._register_otp = register_otp
+        super().__init__(GhasedData(
+            username=username,
+            password=password,
+            email=register_otp.email,
+            phone_number=register_otp.phone_number,
+        ))
+
+    def create(self) -> Ghased:
+        ghased = super(SignUpGhasedCreator, self).create()
+        self._register_otp.mark_as_used()
+        return ghased
+
+
+class TestGhasedCreator(BaseGhasedCreator):
+    wallet_creator_class: Type[
+        WalletCreatorInterface
+    ] = FinancialServicesFacade.get_instance().get_wallet_creator_for_ghased_creation()

@@ -5,7 +5,7 @@ from django.db import models
 
 from accounts.models.services.jwt import GhasedJWTHelper
 from utility.django import GhasedakMobileNumberValidator
-from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
+from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel, GhasedakPhoneNumberField
 
 
 class Ghased(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
@@ -16,11 +16,8 @@ class Ghased(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
         verbose_name='کاربر جنگو'
     )
 
-    phone_number = models.CharField(
-        max_length=13,
-        verbose_name='شماره همراه',
+    phone_number = GhasedakPhoneNumberField(
         unique=True,
-        validators=[GhasedakMobileNumberValidator()]
     )
 
     def get_jwt_tokens(self) -> Tuple[str, str]:
