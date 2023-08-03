@@ -18,7 +18,7 @@ class TransactionEntry(CreateHistoryModelMixin, CreationSensitiveModelMixin, Bas
         on_delete=models.PROTECT,
         null=True, blank=True,
     )
-    amount = models.PositiveBigIntegerField(verbose_name='مقدار')
+    amount = models.BigIntegerField(verbose_name='مقدار')
 
     def after_create(self):
         self.wallet.__class__.objects.update(balance=F('balance') + self.amount)
