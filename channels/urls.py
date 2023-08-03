@@ -1,15 +1,12 @@
 from django.urls import path
 
-from channels.views import ChannelOwnerSubscriptionsView
-from channels.views.channels import CreateChannelView
+from channels.views import ChannelOwnerSubscriptionsView, CreateChannelView, SearchChannelView
 
 urlpatterns = [
     path('create/', CreateChannelView.as_view({
         'post': 'create',
-        'put': 'update',
-        'patch': 'partial_update',
     })),
-    path('update/<int:pk>/', CreateChannelView.as_view({
+    path('<int:pk>/update/', CreateChannelView.as_view({
         'put': 'update',
         'patch': 'partial_update',
     })),
@@ -17,5 +14,8 @@ urlpatterns = [
         'post': 'create',
         'get': 'list',
         'delete': 'destroy',
+    })),
+    path('', SearchChannelView.as_view({
+        'get': 'list',
     })),
 ]
