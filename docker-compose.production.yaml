@@ -4,7 +4,7 @@ services:
   ghasedak:
     image: ghcr.io/ood-ghasedak/backend:latest
     env_file:
-      - .production.env
+      - .env
     command: ['runserver', '0.0.0.0:8000']
     depends_on:
       - db
