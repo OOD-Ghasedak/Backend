@@ -43,5 +43,10 @@ jobs:
           known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+      - name: Delete Prior Container
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} docker-compose -f /home/compute/ghasedak/Backend/docker-compose.production.yaml down
+      - name: Delete Prior Image
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} docker image rm  ghcr.io/ood-ghasedak/backend:latest
       - name: Deploy
+        if: always()
         run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} docker-compose -f /home/compute/ghasedak/Backend/docker-compose.production.yaml up --build -d
