@@ -3,13 +3,13 @@ version: '3.3'
 services:
   ghasedak:
     image: ghcr.io/ood-ghasedak/backend:latest
+    env_file:
+      - .production.env
     command: ['runserver', '0.0.0.0:8000']
     depends_on:
       - db
     ports:
       - "8000:8000"
-    volumes:
-      - ".:/src/"
 
   db:
     image: postgres:13.6-bullseye
