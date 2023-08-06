@@ -6,7 +6,7 @@ from django.db import transaction
 
 from accounts.models import Ghased, RegisterOTP
 from accounts.models.services.ghased_creation.required_data import GhasedData
-from financial._ports.services import ServicesFacade as FinancialServicesFacade
+from financial.facade import FinancialFacade
 from financial.models.services.wallet_creation import WalletCreatorInterface
 
 
@@ -53,7 +53,7 @@ class BaseGhasedCreator(GhasedCreatorInterface, ABC):
 class SignUpGhasedCreator(BaseGhasedCreator):
     wallet_creator_class: Type[
         WalletCreatorInterface
-    ] = FinancialServicesFacade.get_instance().get_wallet_creator_for_ghased_creation()
+    ] = FinancialFacade.get_instance().get_wallet_creator_for_ghased_creation()
 
     def __init__(self, username, password, register_otp: RegisterOTP):
         self._register_otp = register_otp
@@ -73,4 +73,4 @@ class SignUpGhasedCreator(BaseGhasedCreator):
 class TestGhasedCreator(BaseGhasedCreator):
     wallet_creator_class: Type[
         WalletCreatorInterface
-    ] = FinancialServicesFacade.get_instance().get_wallet_creator_for_ghased_creation()
+    ] = FinancialFacade.get_instance().get_wallet_creator_for_ghased_creation()
