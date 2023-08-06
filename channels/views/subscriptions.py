@@ -3,16 +3,17 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModel
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import GenericViewSet
 
-from accounts.views.permissions import IsGhased
+
+from accounts.models import IsGhasedPermission
 from channels.models import Subscription
-from channels.views.permissions import IsOwner
+from channels.views.permissions import IsOwnerPermission
 from channels.views.serializers import OwnerSubscriptionSerializer
 
 
 class ChannelOwnerSubscriptionsView(
     CreateModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet,
 ):
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhased, IsOwner]
+    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsOwnerPermission]
     lookup_field = 'channel_id'
     lookup_url_kwarg = 'pk'
     queryset = Subscription.objects.all()
