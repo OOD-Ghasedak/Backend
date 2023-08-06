@@ -3,7 +3,7 @@ from collections import OrderedDict
 from rest_framework.serializers import ModelSerializer
 
 from channel_management.models import ChannelManager, ChannelOwner
-from channels._ports.serializers import SerializerFacade as ChannelsSerializerFacade
+from channels.facade import ChannelsFacade
 
 
 class ManagedChannelsSerializer(ModelSerializer):
@@ -13,7 +13,7 @@ class ManagedChannelsSerializer(ModelSerializer):
             'id': instance.channel.id,
             'manager_id': instance.id,
             'is_owner': isinstance(instance, ChannelOwner),
-            **ChannelsSerializerFacade.get_instance().summary_serialize_channel(
+            **ChannelsFacade.get_instance().summary_serialize_channel(
                 channel=instance.channel
             ),
         })
