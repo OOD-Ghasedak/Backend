@@ -19,7 +19,7 @@ class OTP(CreateHistoryModelMixin, BaseModel):
 
     @classmethod
     def generate_otp(cls, otp_length: int, available_keys: str, *, save=True):
-        otp: 'OTP' = cls(otp=''.join(random.choices(available_keys, k=otp_length)))
+        otp: 'OTP' = cls(code=''.join(random.choices(available_keys, k=otp_length)))
         if save:
             otp.save()
         return otp

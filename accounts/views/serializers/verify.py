@@ -9,6 +9,7 @@ class RegisterOTPSerializer(ModelSerializer):
         if not (bool(attrs.get('email')) or bool(attrs.get('phone_number'))):
             # TODO: Raise correct error
             pass
+        return attrs
 
     def create(self, validated_data):
         return RegisterOTP.generate_register_otp(**validated_data)

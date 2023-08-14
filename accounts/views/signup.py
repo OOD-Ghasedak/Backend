@@ -5,6 +5,7 @@ from accounts.views.serializers import GhasedSignUpSerializer
 
 
 class GhasedSignUpView(APIView):
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         serializer = GhasedSignUpSerializer(data=request.data)
