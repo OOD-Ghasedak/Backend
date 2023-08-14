@@ -8,6 +8,7 @@ from utility.functions import get_dict_subset
 
 
 class GhasedProfilePatchSerializer(ModelSerializer):
+    email = serializers.EmailField(source='user.email')
 
     def update(self, instance: Ghased, validated_data):
         with transaction.atomic():
