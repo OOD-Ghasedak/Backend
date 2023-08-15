@@ -34,7 +34,7 @@ class BaseGhasedCreator(GhasedCreatorInterface, ABC):
         User = get_user_model()
         user = User.objects.create(
             username=self.ghased_data.username,
-            email=self.ghased_data.email,
+            email='ghased@ghasedak.org',
         )
         user.set_password(self.ghased_data.password)
         user.save()
@@ -47,6 +47,7 @@ class BaseGhasedCreator(GhasedCreatorInterface, ABC):
         return Ghased.objects.create(
             user=user,
             phone_number=self.ghased_data.phone_number,
+            email=self.ghased_data.email,
         )
 
 

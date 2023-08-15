@@ -16,7 +16,7 @@ class RegisterOTPSerializer(ModelSerializer):
 
     def to_representation(self, instance: RegisterOTP):
         return {
-            'otp': instance.otp.code,
+            'otp': instance.code,
         }
 
     class Meta:

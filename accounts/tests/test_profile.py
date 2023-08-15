@@ -11,6 +11,7 @@ class TestGhasedProfile(GhasedTestCase):
         super().setUp()
         self.client = APIClientCheckingDecorator(self.client)
 
+    @tag('unit_api')
     def test_get_profile(self):
         data = self.client.get(
             f'{self.profile_url}',

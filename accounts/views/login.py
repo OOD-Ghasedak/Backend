@@ -7,6 +7,7 @@ from accounts.views.serializers import GhasedLoginSerializer
 
 
 class GhasedLoginView(APIView):
+    permission_classes = []
 
     def post(self, request, *args, **kwargs):
         serializer = GhasedLoginSerializer(data=request.data)

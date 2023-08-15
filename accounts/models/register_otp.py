@@ -1,9 +1,10 @@
+from typing import Optional
+
 from django.db import models, transaction
 from django.db.models import Exists, Q, OuterRef, CheckConstraint
 from django.utils import timezone
-from django.utils.functional import classproperty
 
-from accounts.models import OTP
+from accounts.models import OTP, EMAIL_AND_PHONE_NUMBER_NOT_BOTH_NULL
 from utility.models import GhasedakPhoneNumberField, BaseModel
 
 
@@ -22,6 +23,10 @@ class RegisterOTP(BaseModel):
     email = models.EmailField(null=True, blank=True)
     phone_number = GhasedakPhoneNumberField(null=True, blank=True)
 
+    @property
+    def code(self):
+        return self.otp.code
+
     @classmethod
     def _get_valid_register_otp_filter(cls, otp_code: str) -> Q:
         return Q(
@@ -31,7 +36,7 @@ class RegisterOTP(BaseModel):
         )
 
     @classmethod
-    def generate_register_otp(cls, email: str, phone_number: str) -> 'RegisterOTP':
+    def generate_register_otp(cls, email: Optional[str], phone_number: Optional[str]) -> 'RegisterOTP':
         with transaction.atomic():
             OTP.objects.annotate(
                 has_previous_otp=Exists(
@@ -69,11 +74,8 @@ class RegisterOTP(BaseModel):
     class Meta:
         constraints = (
             CheckConstraint(
-                check=Q(
-                    Q(Q(email__isnull=False) & ~Q(email='')) |
-                    Q(Q(phone_number__isnull=False) & ~Q(phone_number=''))
-                ),
-                name='email_and_phone_number_not_both_null'
+                check=EMAIL_AND_PHONE_NUMBER_NOT_BOTH_NULL,
+                name='email_and_phone_number_not_both_null_in_otp'
             ),
         )
         # TODO: add verbose
