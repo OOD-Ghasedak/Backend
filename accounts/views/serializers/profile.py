@@ -23,10 +23,11 @@ class GhasedProfilePatchSerializer(ModelSerializer):
 
     class Meta:
         model = Ghased
-        user_fields = ['email']
+        user_fields = []
         fields = [
             'id',
             'phone_number',
+            'email',
             *user_fields,
         ]
 
@@ -37,9 +38,10 @@ class GhasedProfileGetSerializer(ModelSerializer):
 
     class Meta:
         model = Ghased
-        user_fields = ['email', 'username']
+        user_fields = ['username']
         fields = [
             'id',
             'phone_number',
+            'email',
             *user_fields,
         ]

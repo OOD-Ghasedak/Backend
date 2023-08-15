@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.views import APIView
 from accounts.views.serializers import GhasedSignUpSerializer
 
@@ -15,4 +15,4 @@ class GhasedSignUpView(APIView):
         return Response(data={
             'access_token': access,
             'refresh_token': refresh
-        }, status=HTTP_200_OK)
+        }, status=HTTP_201_CREATED)
