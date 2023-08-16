@@ -8,7 +8,7 @@ class ChannelAdmin(ChannelManager):
         to='channels.Channel',
         related_name='admins',
         on_delete=models.PROTECT,
-        verbose_name='کانال'
+        verbose_name='کانال',
     )
 
     class Meta:

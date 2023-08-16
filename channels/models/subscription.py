@@ -2,28 +2,16 @@ from django.db import models
 from django.db.models import UniqueConstraint, Q
 from django.utils import timezone
 
+from utility.django import Choices
 from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
 
 
 class Subscription(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
-    class DurationChoices:
-        ONE_MONTH = 'one month'
-        ONE_MONTH_FA = 'یک ماهه'
-        THREE_MONTH = 'three month'
-        THREE_MONTH_FA = 'سه ماهه'
-        SIX_MONTH = 'six month'
-        SIX_MONTH_FA = 'شش ماهه'
-        TWELVE_MONTH = 'twelve month'
-        TWELVE_MONTH_FA = 'دوازده ماهه'
-
-        @classmethod
-        def get_choices(cls):
-            return (
-                (cls.ONE_MONTH, cls.ONE_MONTH_FA),
-                (cls.THREE_MONTH, cls.THREE_MONTH_FA),
-                (cls.SIX_MONTH, cls.SIX_MONTH_FA),
-                (cls.TWELVE_MONTH, cls.TWELVE_MONTH_FA),
-            )
+    class DurationChoices(Choices):
+        ONE_MONTH = Choices.Choice('one month', 'یک ماهه')
+        THREE_MONTH = Choices.Choice('three month', 'سه ماهه')
+        SIX_MONTH = Choices.Choice('six month', 'شش ماهه')
+        TWELVE_MONTH = Choices.Choice('twelve month', 'دوازده ماهه')
 
     duration_choice = models.CharField(
         max_length=128,

@@ -18,4 +18,7 @@ urlpatterns = [
     path('', SearchChannelView.as_view({
         'get': 'list',
     })),
+    path('<int:pk>/contents/', .as_view({
+        'get': 'list',
+    })),
 ]
