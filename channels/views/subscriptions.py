@@ -8,11 +8,13 @@ from accounts.models import IsGhasedPermission
 from channels.models import Subscription
 from channels.views.permissions import IsOwnerPermission
 from channels.views.serializers import OwnerSubscriptionSerializer
+from utility.django_rest_framework import ObjectRelatedFilterset
 
 
 class ChannelOwnerSubscriptionsView(
     CreateModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet,
 ):
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsOwnerPermission]
     lookup_field = 'channel_id'
     lookup_url_kwarg = 'pk'
@@ -28,20 +30,6 @@ class ChannelOwnerSubscriptionsView(
     def get_serializer(self, *args, **kwargs):
         kwargs.update(dict(many=True))
         return super().get_serializer(*args, **kwargs)
-
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-
-        assert lookup_url_kwarg in self.kwargs, (
-            'Expected view %s to be called with a URL keyword argument '
-            'named "%s". Fix your URL conf, or set the `.lookup_field` '
-            'attribute on the view correctly.' %
-            (self.__class__.__name__, lookup_url_kwarg)
-        )
-
-        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
-        return queryset.filter(**filter_kwargs)
 
     def get_object(self):
         return self.filter_queryset(self.get_queryset())

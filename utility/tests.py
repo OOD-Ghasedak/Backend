@@ -9,7 +9,7 @@ def check_wrapper(client_request_function):
     def raise_or_return_response(response, assert_status_code: Optional[int]):
         if assert_status_code is not None:
             assert assert_status_code == response.status_code, \
-                f'expected: {assert_status_code}, actual: {response.status_code}, content: {response.json()}'
+                f'expected: {assert_status_code}, actual: {response.status_code}'
         return response
 
     def check_and_request(*args, **kwargs):
