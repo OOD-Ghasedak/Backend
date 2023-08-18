@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from datetime import timedelta
+from distutils.util import strtobool
 from pathlib import Path
 
 from decouple import config
@@ -170,3 +171,20 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SECURE_FILE_HANDLING_APIS = config('SECURE_FILE_HANDLING_APIS', 'true', cast=strtobool)
+
+ACCEPTED_MIME_TYPES = {
+    'content_file': [
+        # --------------- image --------------- #
+        'image/jpg', 'image/jpeg', 'image/gif', 'image/png',
+        # --------------- video --------------- #
+        'video/mp4', 'video/x-m4v ',
+        # --------------- audio --------------- #
+        'audio/ogg', 'audio/mpeg', 'audio/x-m4a',
+    ]
+}
+
+ACCEPTED_FILE_SIZES = {
+    'content_file': 10,
+}

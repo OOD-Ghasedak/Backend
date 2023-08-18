@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class IsOwnerPermission(BasePermission):
-    def has_object_permission(self, request, view, obj: Channel):
+    def has_object_permission(self, request, view, obj: 'Channel'):
         return obj.owner.ghased_id == request.ghased.id
 
 

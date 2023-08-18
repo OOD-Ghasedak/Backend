@@ -23,13 +23,8 @@ class DepositView(CreateModelMixin, GenericViewSet):
         IsGhasedPermission,
     ]
 
-    def get_serializer(self, *args, **kwargs):
-        data = kwargs['data']
-        data.update(dict(
-            wallet=self.request.ghased.wallet_id
-        ))
-        kwargs['data'] = data
-        return super(DepositView, self).get_serializer(*args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(wallet=self.request.ghased.wallet_id)
 
 
 class WithdrawView(CreateModelMixin, GenericViewSet):
@@ -38,10 +33,5 @@ class WithdrawView(CreateModelMixin, GenericViewSet):
         IsGhasedPermission,
     ]
 
-    def get_serializer(self, *args, **kwargs):
-        data = kwargs['data']
-        data.update(dict(
-            wallet=self.request.ghased.wallet_id
-        ))
-        kwargs['data'] = data
-        return super(WithdrawView, self).get_serializer(*args, **kwargs)
+    def perform_create(self, serializer):
+        serializer.save(wallet=self.request.ghased.wallet_id)

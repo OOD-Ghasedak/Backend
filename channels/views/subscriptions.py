@@ -15,12 +15,17 @@ class ChannelOwnerSubscriptionsView(
     CreateModelMixin, ListModelMixin, DestroyModelMixin, GenericViewSet,
 ):
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsOwnerPermission]
     object_related_queryset = Channel.objects.all()
     lookup_field = 'channel_id'
     lookup_url_kwarg = 'pk'
     queryset = Subscription.objects.all()
     serializer_class = OwnerSubscriptionSerializer
+
+    def get_permissions(self):
+        permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission]
+        if self.action != 'list':
+            permission_classes += [IsOwnerPermission()]
+        return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):
         return {
@@ -33,6 +38,8 @@ class ChannelOwnerSubscriptionsView(
         return super().get_serializer(*args, **kwargs)
 
     def get_object(self):
+        related_obj = ObjectRelatedFilterset().get_related_object(self)
+        self.check_object_permissions(self.request, related_obj)
         return self.filter_queryset(self.get_queryset())
 
     def perform_destroy(self, instances):
