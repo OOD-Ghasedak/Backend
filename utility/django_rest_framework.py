@@ -7,7 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 class ObjectRelatedFilterset(BaseFilterBackend):
 
     def get_lookup_url_kwarg(self, view):
-        lookup_url_kwarg = view.lookup_url_kwarg or view.lookup_field
+        lookup_url_kwarg = view.related_lookup_url_kwarg or view.related_lookup_field
 
         assert lookup_url_kwarg in view.kwargs, (
                 'Expected view %s to be called with a URL keyword argument '
@@ -19,7 +19,7 @@ class ObjectRelatedFilterset(BaseFilterBackend):
 
     def get_lookup_url(self, view):
         lookup_url_kwarg = self.get_lookup_url_kwarg(view)
-        return view[lookup_url_kwarg]
+        return view.kwargs[lookup_url_kwarg]
 
     def get_related_object(self, view):
         lookup_url = self.get_lookup_url(view)
@@ -35,7 +35,7 @@ class ObjectRelatedFilterset(BaseFilterBackend):
         lookup_url = self.get_lookup_url(view)
 
         self.get_related_object(view)
-        filter_kwargs = {view.lookup_field: view.kwargs[lookup_url]}
+        filter_kwargs = {view.related_lookup_field: view.kwargs[lookup_url]}
         return queryset.filter(**filter_kwargs)
 
 

@@ -16,15 +16,15 @@ class ChannelOwnerSubscriptionsView(
 ):
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
     object_related_queryset = Channel.objects.all()
-    lookup_field = 'channel_id'
-    lookup_url_kwarg = 'pk'
+    related_lookup_field = 'channel_id'
+    related_lookup_url_kwarg = 'channel_pk'
     queryset = Subscription.objects.all()
     serializer_class = OwnerSubscriptionSerializer
 
     def get_permissions(self):
         permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission]
         if self.action != 'list':
-            permission_classes += [IsOwnerPermission()]
+            permission_classes += [IsOwnerPermission]
         return [permission() for permission in permission_classes]
 
     def get_serializer_context(self):

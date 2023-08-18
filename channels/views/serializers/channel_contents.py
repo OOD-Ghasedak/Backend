@@ -68,36 +68,23 @@ class CreateContentFileSerializer(ModelSerializer, metaclass=ConfiguredSecuredFi
     accepted_mime_types = settings.ACCEPTED_MIME_TYPES['content_file']
     file_size_limit = settings.ACCEPTED_FILE_SIZES['content_file'] * (1 << 20)
 
+    def validate(self, attrs):
+        attrs['file_type'] = ContentFile.ContentFileTypes.from_mime_type(
+            self.context[self.__class__.file_security_context_key]['file_type']
+        )
+        return attrs
+
     class Meta:
         model = ContentFile
         fields = [
             'id',
             'file',
-            'file_type',
         ]
 
 
 class CreateUpdateChannelContnentSerializer(ModelSerializer):
-    files = CreateContentFileSerializer(required=False)
-
-    def create(self, validated_data):
-        with transaction.atomic():
-            files = validated_data.pop('files', None)
-            channel_content: ChannelContent = super().create(validated_data)
-            for datum in files:
-                serializer = CreateContentFileSerializer(data=datum, context=self.context)
-                serializer.is_valid(raise_exception=True)
-                serializer.save(content=channel_content)
-            return channel_content
-
-    def update(self, instance, validated_data):
-        with transaction.atomic():
-            validated_data.pop('files', None)
-            channel_content: ChannelContent = super().update(instance, validated_data)
-            return channel_content
-
     class Meta:
         model = ChannelContent
         fields = [
-            'title', 'summary', 'price', 'text', 'files',
+            'title', 'summary', 'price', 'text',
         ]
