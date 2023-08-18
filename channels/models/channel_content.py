@@ -43,7 +43,7 @@ class ChannelContent(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
 
 
 def content_file_upload_to(instance: 'ContentFile', filename):
-    return f'channels/contents/{instance.content.channel.id}--{instance.content.id}--{filename}'
+    return f'channels/contents/channel {instance.content.channel.id}, content {instance.content.id}, {filename}'
 
 
 class ContentFile(BaseModel):
@@ -51,6 +51,16 @@ class ContentFile(BaseModel):
         IMAGE = Choices.Choice('image', 'تصویر')
         Video = Choices.Choice('video', 'ویدیو')
         AUDIO = Choices.Choice('audio', 'صوت')
+
+        @classmethod
+        def from_mime_type(cls, mime_type: str):
+            type_ = mime_type.split('/')[0]
+            for content_file_type in cls.get_choices():
+                cft, cft_fa = content_file_type
+                if type_ == cft:
+                    return cft
+            assert False, 'Unsupported Mime Type!'
+
 
     file = models.FileField(
         verbose_name='فایل محتوا',

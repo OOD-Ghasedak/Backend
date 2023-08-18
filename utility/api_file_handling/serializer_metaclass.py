@@ -8,7 +8,7 @@ from rest_framework.serializers import SerializerMetaclass
 class SecuredFileSerializerMetaclass(SerializerMetaclass):
     validator_generators = []
     extra_validators: List[Callable]
-    context_key = 'file_security'
+    file_security_context_key = 'file_security'
 
     @classmethod
     def _get_validator_generators(cls):
@@ -30,7 +30,7 @@ class SecuredFileSerializerMetaclass(SerializerMetaclass):
 
     @classmethod
     def _set_from_serializer_class(cls, serializer_class: "SecuredFileSerializerMetaclass"):
-        cls.context_key = getattr(serializer_class, 'file_security_context_key', cls.context_key)
+        cls.file_security_context_key = getattr(serializer_class, 'file_security_context_key', cls.file_security_context_key)
         cls.extra_validators = getattr(serializer_class, 'file_security_extra_validators', [])
 
     def __new__(cls, name, bases, attrs):
@@ -46,7 +46,7 @@ class SecuredFileSerializerMetaclass(SerializerMetaclass):
 
     @classmethod
     def update_context(cls, serializer, **kwargs):
-        serializer.context[cls.context_key] = {
-            **serializer.context.get(cls.context_key, {}),
+        serializer.context[cls.file_security_context_key] = {
+            **serializer.context.get(cls.file_security_context_key, {}),
             **kwargs
         }

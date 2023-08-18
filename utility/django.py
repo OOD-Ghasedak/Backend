@@ -35,8 +35,6 @@ class ChoicesMeta(type):
         if item in ['Choice', 'REAL_ACCESS_TO_CHOICE_FLAG']:
             return super().__getattribute__(item)
 
-        if item.startswith(cls.REAL_ACCESS_TO_CHOICE_FLAG):
-            return super().__getattribute__(item.lstrip(cls.REAL_ACCESS_TO_CHOICE_FLAG))
         attr = super().__getattribute__(item)
         if isinstance(attr, Choices.Choice):
             return attr.value
@@ -50,16 +48,13 @@ class Choices(metaclass=ChoicesMeta):
         fa_value: str
 
     @classmethod
-    def real_access_to_choice(cls, choice_name: str):
-        return getattr(cls, f'{cls.REAL_ACCESS_TO_CHOICE_FLAG}{choice_name}')
-
-    @classmethod
     def _get_choices(cls) -> List[Choice]:
         choices = []
-        for attr in vars(cls):
-            if attr.startswith('__'):
-                continue
-            choices.append(cls.real_access_to_choice(attr))
+        vars_ = vars(cls)
+        for attr in vars_:
+            attribute = vars_[attr]
+            if isinstance(attribute, cls.Choice):
+                choices.append(attribute)
         return choices
 
     @classmethod
