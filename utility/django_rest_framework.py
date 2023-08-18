@@ -1,4 +1,7 @@
+from django.db.models import QuerySet
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 
 
 class ObjectRelatedFilterset(BaseFilterBackend):
@@ -13,5 +16,15 @@ class ObjectRelatedFilterset(BaseFilterBackend):
             (self.__class__.__name__, lookup_url_kwarg)
         )
 
+        if hasattr(view, 'object_related_queryset'):
+            model: QuerySet = view.object_related_queryset
+            view.object_related = get_object_or_404(model, id=view.kwargs[lookup_url_kwarg])
+
         filter_kwargs = {view.lookup_field: view.kwargs[lookup_url_kwarg]}
         return queryset.filter(**filter_kwargs)
+
+
+class GhasedakPageNumberPagination(PageNumberPagination):
+    page_size_query_param = 'page-size'
+    page_size = 10
+    max_page_size = 100

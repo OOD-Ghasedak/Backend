@@ -1,6 +1,11 @@
 from django.urls import path
 
-from channels.views import ChannelOwnerSubscriptionsView, CreateChannelView, SearchChannelView
+from channels.views import (
+    ChannelOwnerSubscriptionsView,
+    CreateChannelView,
+    SearchChannelView,
+    ChannelContentsView,
+)
 
 urlpatterns = [
     path('create/', CreateChannelView.as_view({
@@ -18,7 +23,7 @@ urlpatterns = [
     path('', SearchChannelView.as_view({
         'get': 'list',
     })),
-    path('<int:pk>/contents/', .as_view({
+    path('<int:pk>/contents/', ChannelContentsView.as_view({
         'get': 'list',
     })),
 ]

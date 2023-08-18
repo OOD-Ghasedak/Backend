@@ -36,7 +36,7 @@ TEST, DEVELOPMENT, PRODUCTION = [False] * 3
 EXTERNAL_PACKAGES = [
     'rest_framework',
     'corsheaders',
-    'django-filter',
+    'django_filters',
 ]
 
 CUSTOM_APPS = [
