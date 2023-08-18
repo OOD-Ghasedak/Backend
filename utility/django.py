@@ -3,6 +3,7 @@ from typing import List, Tuple, Dict
 
 from django.core.validators import BaseValidator
 from django.utils.deconstruct import deconstructible
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 
@@ -73,3 +74,29 @@ class Choices(metaclass=ChoicesMeta):
     @classmethod
     def get_translator(cls) -> Dict[str, str]:
         return dict(cls.get_choices())
+
+
+unsafe_chars_translator = {
+    ord('\\'): '\\u005C',
+    ord('\''): '\\u0027',
+    ord('='): '\\u003D',
+    ord('-'): '\\u002D',
+    ord(';'): '\\u003B',
+    ord('`'): '\\u0060',
+    ord('\u2028'): '\\u2028',
+    ord('\u2029'): '\\u2029',
+    ord('&'): '&amp;',
+    ord('<'): '&lt;',
+    ord('>'): '&gt;',
+    ord('"'): '&quot;',
+    ord("'"): '&#39;',
+}
+unsafe_chars_translator.update((ord('%c' % z), '\\u%04X' % z) for z in range(32))
+
+
+def safe_it(unsafe_input: str) -> str:
+    return mark_safe(str(unsafe_input).translate(unsafe_chars_translator))
+
+
+def is_unsafe(unknown_input: str) -> bool:
+    return safe_it(unknown_input) != unknown_input
