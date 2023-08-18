@@ -5,8 +5,8 @@ from rest_framework.viewsets import GenericViewSet
 
 
 from accounts.models import IsGhasedPermission
-from channels.models import Subscription
-from channels.views.permissions import IsOwnerPermission
+from channel_management.models import IsOwnerPermission
+from channels.models import Subscription, Channel
 from channels.views.serializers import OwnerSubscriptionSerializer
 from utility.django_rest_framework import ObjectRelatedFilterset
 
@@ -16,6 +16,7 @@ class ChannelOwnerSubscriptionsView(
 ):
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsOwnerPermission]
+    object_related_queryset = Channel.objects.all()
     lookup_field = 'channel_id'
     lookup_url_kwarg = 'pk'
     queryset = Subscription.objects.all()

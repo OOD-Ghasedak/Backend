@@ -1,2 +1,3 @@
 from .channels import BaseChannelSerializer, ChannelSerializerConfigurer
 from .subscriptions import OwnerSubscriptionSerializer
+from .contents import ChannelContentSerializerConfigurer
