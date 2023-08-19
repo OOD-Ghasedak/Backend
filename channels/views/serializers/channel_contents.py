@@ -18,7 +18,7 @@ class ChannelContentSerializer(ModelSerializer):
 class FreeContentSerializer(ChannelContentSerializer):
     class Meta(ChannelContentSerializer.Meta):
         fields = [
-            'title', 'summary', 'is_perimum', 'price',
+            'title', 'summary', 'is_premium', 'price',
         ]
 
 
@@ -43,7 +43,7 @@ class FullFeatureContentSerializer(ChannelContentSerializer):
 
     class Meta(ChannelContentSerializer.Meta):
         fields = [
-            'title', 'summary', 'is_perimum', 'price', 'text', 'file',
+            'title', 'summary', 'is_premium', 'price', 'text', 'file',
         ]
 
 
@@ -82,7 +82,7 @@ class CreateContentFileSerializer(ModelSerializer, metaclass=ConfiguredSecuredFi
         ]
 
 
-class CreateUpdateChannelContnentSerializer(ModelSerializer):
+class CreateUpdateChannelContentSerializer(ModelSerializer):
     class Meta:
         model = ChannelContent
         fields = [

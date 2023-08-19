@@ -34,7 +34,7 @@ class ChannelContent(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
     )
 
     @property
-    def is_perimum(self):
+    def is_premium(self):
         return self.price > 0
 
     class Meta:
