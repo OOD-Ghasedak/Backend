@@ -31,7 +31,7 @@ class CreateChannelView(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         with transaction.atomic():
-            channel = self.perform_create(serializer)
+            channel = serializer.save()
             channel_manager_configurer.configure(ManagerData(ghased=request.user.ghased, channel=channel)).create()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
