@@ -37,6 +37,7 @@ urlpatterns = [
     })),
     path('contents/<int:content_pk>/files/', CreateContentFileView.as_view({
         'post': 'create',
+        'get': 'retrieve'
     })),
     path('contents/files/<int:pk>/', UpdateContentFileView.as_view({
         'put': 'update',

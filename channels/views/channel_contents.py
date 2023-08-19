@@ -1,4 +1,5 @@
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, \
+    RetrieveModelMixin
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import GenericViewSet
 
@@ -65,7 +66,7 @@ class UpdateRetrieveContentsView(UpdateModelMixin, DestroyModelMixin, GenericVie
         return super(UpdateRetrieveContentsView, self).get_object()
 
 
-class CreateContentFileView(CreateModelMixin, GenericViewSet):
+class CreateContentFileView(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
     filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsManagerPermission]
     object_related_queryset = ChannelContent.objects.all()
@@ -79,6 +80,10 @@ class CreateContentFileView(CreateModelMixin, GenericViewSet):
         self.check_object_permissions(self.request, obj.channel)
         self.related_object = obj
         return obj
+
+    def retrieve(self, request, *args, **kwargs):
+        self.get_related_object()
+        return super().retrieve(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         self.get_related_object()
