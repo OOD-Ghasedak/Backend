@@ -1,7 +1,7 @@
 from django.urls import path
 
-from accounts.views import GhasedLoginView
+from subscribe.views import SubscribedChannelsView
 
 urlpatterns = [
-    path('joined-channels/', GhasedLoginView.as_view()),
+    path('joined-channels/', SubscribedChannelsView.as_view()),
 ]

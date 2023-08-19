@@ -4,9 +4,10 @@ from rest_framework.settings import api_settings
 from rest_framework.viewsets import GenericViewSet
 
 from accounts.models import IsGhasedPermission
+from channel_management.models import IsManagerPermission
 from channels.models import Channel
-from channels.views.permissions import IsManagerPermission
 from channels.views.serializers import BaseChannelSerializer, ChannelSerializerConfigurer
+from utility.django_rest_framework import GhasedakPageNumberPagination
 
 
 class CreateChannelView(
@@ -23,8 +24,13 @@ class CreateChannelView(
     ).configure_class()
 
 
+class SearchChannelPagination(GhasedakPageNumberPagination):
+    page_size = 20
+    max_page_size = 50
+
+
 class SearchChannelView(ListModelMixin, GenericViewSet):
-    # TODO: add paginator when needed
+    pagination_class = SearchChannelPagination
     queryset = Channel.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
