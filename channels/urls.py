@@ -5,7 +5,7 @@ from channels.views import (
     CreateChannelView,
     SearchChannelView,
     CreateListContentsView,
-    UpdateRetrieveContentsView,
+    UpdateDestroyContentsView,
     CreateContentFileView,
     UpdateContentFileView,
 )
@@ -30,7 +30,7 @@ urlpatterns = [
         'get': 'list',
         'post': 'create',
     })),
-    path('contents/<int:pk>/', UpdateRetrieveContentsView.as_view({
+    path('contents/<int:pk>/', UpdateDestroyContentsView.as_view({
         'put': 'update',
         'patch': 'partial_update',
         'delete': 'destroy'
