@@ -52,7 +52,7 @@ class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
         serializer.save(channel=self.related_object)
 
 
-class UpdateRetrieveContentsView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
+class UpdateDestroyContentsView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsManagerPermission]
     lookup_field = 'id'
     lookup_url_kwarg = 'pk'
@@ -60,10 +60,10 @@ class UpdateRetrieveContentsView(UpdateModelMixin, DestroyModelMixin, GenericVie
     serializer_class = CreateUpdateChannelContentSerializer
 
     def check_object_permissions(self, request, obj):
-        return super(UpdateRetrieveContentsView, self).check_object_permissions(request, obj.channel)
+        return super(UpdateDestroyContentsView, self).check_object_permissions(request, obj.channel)
 
     def get_object(self):
-        return super(UpdateRetrieveContentsView, self).get_object()
+        return super(UpdateDestroyContentsView, self).get_object()
 
 
 class CreateContentFileView(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
