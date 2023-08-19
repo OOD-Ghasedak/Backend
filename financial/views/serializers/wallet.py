@@ -16,10 +16,10 @@ class WalletSerializer(ModelSerializer):
 class DepositSerializer(ModelSerializer):
     class Meta:
         model = TransactionEntry
-        fields = ['amount', 'wallet']
+        fields = ['amount']
 
 
 class WithdrawSerializer(ModelSerializer):
     class Meta:
         model = TransactionEntry
-        fields = ['amount', 'wallet']
+        fields = ['amount']
