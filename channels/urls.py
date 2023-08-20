@@ -18,6 +18,9 @@ urlpatterns = [
         'put': 'update',
         'patch': 'partial_update',
     })),
+    path('<int:channel_pk>/', CreateChannelView.as_view({
+        'get': 'retrieve',
+    })),
     path('<int:channel_pk>/subscriptions/', ChannelOwnerSubscriptionsView.as_view({
         'post': 'create',
         'get': 'list',

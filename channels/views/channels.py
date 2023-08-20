@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import filters, status
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.viewsets import GenericViewSet
@@ -14,7 +14,7 @@ from utility.django_rest_framework import GhasedakPageNumberPagination
 
 
 class CreateChannelView(
-    UpdateModelMixin, CreateModelMixin, GenericViewSet,
+    RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, GenericViewSet,
 ):
     lookup_field = 'pk'
     queryset = Channel.objects.all()
@@ -22,9 +22,15 @@ class CreateChannelView(
         IsGhasedPermission,
         IsManagerPermission,
     ]
-    serializer_class: BaseChannelSerializer = ChannelSerializerConfigurer(
-        mode=ChannelSerializerConfigurer.Mode.CREATE
-    ).configure_class()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ChannelSerializerConfigurer(
+                mode=ChannelSerializerConfigurer.Mode.GHASED_VIEW
+            ).configure_class()
+        return ChannelSerializerConfigurer(
+            mode=ChannelSerializerConfigurer.Mode.CREATE
+        ).configure_class()
 
     def create(self, request, *args, **kwargs):
         channel_manager_configurer = ChannelManagerCreatorConfigurer(ChannelManagerCreatorConfigurer.Sources.OWNER)
@@ -35,6 +41,10 @@ class CreateChannelView(
             channel_manager_configurer.configure(ManagerData(ghased=request.user.ghased, channel=channel)).create()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def retrieve(self, request, *args, **kwargs):
+        serializer = self.get_serializer_class()(ghased=request.user.ghased)
+        return Response(serializer.data)
 
 
 class SearchChannelPagination(GhasedakPageNumberPagination):

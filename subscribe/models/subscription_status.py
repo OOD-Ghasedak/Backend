@@ -6,6 +6,7 @@ from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, Bas
 
 class SubscriptionStatus(CreateHistoryModelMixin, UpdateHistoryModelMixin, BaseModel):
     expires_at = models.DateTimeField(
+        auto_now_add=True,
         verbose_name='تاریخ انقضا',
         null=True, blank=True,
     )
