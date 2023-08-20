@@ -23,3 +23,7 @@ class WithdrawSerializer(ModelSerializer):
     class Meta:
         model = TransactionEntry
         fields = ['amount']
+
+    def validate(self, attrs):
+        attrs['amount'] = -attrs['amount']
+        return attrs

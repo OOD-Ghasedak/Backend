@@ -24,7 +24,7 @@ class DepositView(CreateModelMixin, GenericViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(wallet=self.request.ghased.wallet_id)
+        serializer.save(wallet=self.request.user.ghased.wallet)
 
 
 class WithdrawView(CreateModelMixin, GenericViewSet):
@@ -34,4 +34,4 @@ class WithdrawView(CreateModelMixin, GenericViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(wallet=self.request.ghased.wallet_id)
+        serializer.save(wallet=self.request.user.ghased.wallet)
