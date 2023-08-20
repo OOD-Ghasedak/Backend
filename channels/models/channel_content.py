@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from django.db import models
 
 from utility.django import Choices
@@ -36,6 +38,10 @@ class ChannelContent(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
     @property
     def is_premium(self):
         return self.price > 0
+
+    @cached_property
+    def file(self) -> 'ContentFile':
+        return self.files.first()
 
     class Meta:
         verbose_name = 'محتوای کانال'
