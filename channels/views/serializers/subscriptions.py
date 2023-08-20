@@ -1,7 +1,9 @@
 from rest_framework.serializers import ModelSerializer, ListSerializer
 
+from channels.models import Subscription
 
-class OwnerSubscriptioListSerializer(ListSerializer):
+
+class OwnerSubscriptionListSerializer(ListSerializer):
 
     def update(self, instance, validated_data):
         raise NotImplementedError
@@ -18,9 +20,10 @@ class OwnerSubscriptioListSerializer(ListSerializer):
 
 class OwnerSubscriptionSerializer(ModelSerializer):
     class Meta:
-        list_serializer_class = OwnerSubscriptioListSerializer
+        model = Subscription
+        list_serializer_class = OwnerSubscriptionListSerializer
         fields = [
+            'id',
             'price',
-            'channel',
             'duration_choice',
         ]

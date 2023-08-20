@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from utility.models import BaseModel, CreateHistoryModelMixin, CreationSensitiveModelMixin
 
@@ -20,7 +21,10 @@ class PurchasedSubscription(CreateHistoryModelMixin, CreationSensitiveModelMixin
 
     def after_create(self):
         status = self.subscriber.subscription_status
-        status.expires_at += self.subscription.duration
+        if status.is_premium:
+            status.expires_at += self.subscription.duration
+        else:
+            status.expires_at = timezone.now() + self.subscription.duration
         status.save(update_fields=['expires_at'])
 
     class Meta:

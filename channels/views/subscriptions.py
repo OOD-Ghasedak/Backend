@@ -30,7 +30,7 @@ class ChannelOwnerSubscriptionsView(
     def get_serializer_context(self):
         return {
             **super().get_serializer_context(),
-            'channel': self.kwargs[self.lookup_url_kwarg],
+            'channel': Channel.objects.get(id=self.kwargs[self.related_lookup_url_kwarg]),
         }
 
     def get_serializer(self, *args, **kwargs):
