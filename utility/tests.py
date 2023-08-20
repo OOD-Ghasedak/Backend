@@ -1,4 +1,5 @@
 import os
+import random
 import shutil
 from typing import Optional
 
@@ -45,6 +46,12 @@ class GhasedTestCase(APITestCase):
     @property
     def jwt_token(self):
         return f'JWT {self.jwt_access_token}'
+
+    def create_random_ghased(self):
+        rand = random.randint(int(1e9), int(1e10)-1)
+        return GhasedCreatorConfigurer(source=GhasedCreatorConfigurer.Sources.TEST).configure(
+            GhasedData(f'test_user{rand}', f'09{rand}', f'test{rand}@ghasedak.ir', 'my_secured_password'),
+        ).create()
 
     def setUp(self) -> None:
         self.ghased = GhasedCreatorConfigurer(source=GhasedCreatorConfigurer.Sources.TEST).configure(
