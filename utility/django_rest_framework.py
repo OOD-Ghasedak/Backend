@@ -35,7 +35,7 @@ class ObjectRelatedFilterset(BaseFilterBackend):
         lookup_url = self.get_lookup_url(view)
 
         self.get_related_object(view)
-        filter_kwargs = {view.related_lookup_field: view.kwargs[lookup_url]}
+        filter_kwargs = {view.related_lookup_field: lookup_url}
         return queryset.filter(**filter_kwargs)
 
 

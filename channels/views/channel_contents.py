@@ -1,3 +1,4 @@
+from rest_framework.filters import OrderingFilter
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, \
     RetrieveModelMixin
 from rest_framework.settings import api_settings
@@ -18,7 +19,8 @@ class ChannelContentsPagination(GhasedakPageNumberPagination):
 
 class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
     pagination_class = ChannelContentsPagination
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
+    ordering = ['created']
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset, OrderingFilter]
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission]
     object_related_queryset = Channel.objects.all()
     related_lookup_field = 'channel_id'
@@ -31,12 +33,13 @@ class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
             permission_classes += [IsManagerPermission]
         return [permission() for permission in permission_classes]
 
-    def get_serializer_class(self):
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault('context', self.get_serializer_context())
         if self.action == 'list':
             return ChannelContentSerializerConfigurer(
-                self.request, ObjectRelatedFilterset().get_related_object(self),
-            ).configure_class()
-        return CreateUpdateChannelContentSerializer
+                self.request.ghased, ObjectRelatedFilterset().get_related_object(self),
+            ).configure(*args, **kwargs)
+        return CreateUpdateChannelContentSerializer(*args, **kwargs)
 
     def get_related_object(self):
         obj = ObjectRelatedFilterset().get_related_object(self)
