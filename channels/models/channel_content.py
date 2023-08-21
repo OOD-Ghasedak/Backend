@@ -1,4 +1,5 @@
 from functools import cached_property
+from typing import Optional
 
 from django.db import models
 
@@ -40,8 +41,19 @@ class ChannelContent(CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
         return self.price > 0
 
     @cached_property
-    def file(self) -> 'ContentFile':
+    def file(self) -> Optional['ContentFile']:
         return self.files.first()
+
+    def refresh_file(self):
+        try:
+            del self.file
+        except AttributeError:
+            pass
+
+    def refresh_from_db(self, using=None, fields=None):
+        result = super().refresh_from_db(using, fields)
+        self.refresh_file()
+        return result
 
     class Meta:
         verbose_name = 'محتوای کانال'

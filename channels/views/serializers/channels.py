@@ -24,14 +24,6 @@ class ChannelSummarySerializer(BaseChannelSerializer):
 
 
 class ChannelSerializer(BaseChannelSerializer):
-    pass
-
-
-class ChannelCreateSerializer(BaseChannelSerializer):
-    pass
-
-
-class ChannelGhasedViewSerializer(BaseChannelSerializer):
     def __init__(self, ghased, **kwargs):
         super().__init__(**kwargs)
         self.ghased = ghased
@@ -44,12 +36,12 @@ class ChannelGhasedViewSerializer(BaseChannelSerializer):
 
     def obj_to_role(self, obj):
         if isinstance(obj, ChannelOwner):
-            return ChannelGhasedViewSerializer.Role.OWNER
+            return self.Role.OWNER
         if isinstance(obj, ChannelAdmin):
-            return ChannelGhasedViewSerializer.Role.ADMIN
+            return self.Role.ADMIN
         if isinstance(obj, Subscriber):
-            return ChannelGhasedViewSerializer.Role.SUBSCRIBER
-        return ChannelGhasedViewSerializer.Role.VIEWER
+            return self.Role.SUBSCRIBER
+        return self.Role.VIEWER
 
     def to_representation(self, instance: Channel):
         return OrderedDict({
@@ -60,12 +52,15 @@ class ChannelGhasedViewSerializer(BaseChannelSerializer):
         })
 
 
+class ChannelCreateSerializer(BaseChannelSerializer):
+    pass
+
+
 class ChannelSerializerConfigurer(Configurer[BaseChannelSerializer]):
     class Mode(Enum):
         FULL = 'full'
         SUMMARY = 'summary'
         CREATE = 'create'
-        GHASED_VIEW = 'ghased_view'
 
     def __init__(self, mode: Mode):
         self.mode = mode
@@ -75,7 +70,6 @@ class ChannelSerializerConfigurer(Configurer[BaseChannelSerializer]):
             self.Mode.FULL: ChannelSerializer,
             self.Mode.SUMMARY: ChannelSummarySerializer,
             self.Mode.CREATE: ChannelCreateSerializer,
-            self.Mode.GHASED_VIEW: ChannelGhasedViewSerializer,
         }[self.mode]
 
     def configure(self, channel: Channel):

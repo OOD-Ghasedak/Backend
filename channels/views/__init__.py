@@ -1,8 +1,7 @@
-from .channels import CreateChannelView, SearchChannelView
+from .channels import ChannelsView, SearchChannelView
 from .subscriptions import ChannelOwnerSubscriptionsView
 from .channel_contents import (
     CreateListContentsView,
     UpdateDestroyContentsView,
-    CreateContentFileView,
-    UpdateContentFileView,
 )
+from .channel_admins import ChannelAdminsView
