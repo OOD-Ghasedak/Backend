@@ -12,4 +12,6 @@ class ChannelsFacade(ComponentFacade):
 
     def summary_serialize_channel(self, channel: 'Channel') -> ReturnDict:
         from channels.views.serializers import ChannelSerializerConfigurer
-        return ChannelSerializerConfigurer(mode=ChannelSerializerConfigurer.Mode.SUMMARY).configure(channel).data
+        return ChannelSerializerConfigurer(mode=ChannelSerializerConfigurer.Mode.SUMMARY).configure(
+            instance=channel
+        ).data

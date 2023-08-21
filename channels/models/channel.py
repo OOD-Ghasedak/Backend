@@ -5,6 +5,7 @@ from django.db import models
 from channel_management.models import ChannelOwner, ChannelAdmin
 from subscribe.models import Subscriber
 from utility.models import CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel
+from utility.models.managers import filter_active_objects
 
 
 class Channel(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelMixin, BaseModel):
@@ -25,6 +26,9 @@ class Channel(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelM
             return found_subscriber
         return None
 
+    @property
+    def has_subscription(self):
+        return filter_active_objects(self.subscriptions).exists()
 
     class Meta:
         verbose_name = 'کانال'

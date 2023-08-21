@@ -1,6 +1,7 @@
 from django.db.models import QuerySet
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.generics import get_object_or_404
+from rest_framework.mixins import CreateModelMixin as DRFCreateModelMixin, ListModelMixin as DRFListModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import GenericViewSet as DRFGenericViewSet
 
@@ -46,15 +47,16 @@ class GhasedakPageNumberPagination(PageNumberPagination):
 
 
 class GenericViewSet(DRFGenericViewSet):
+    related_object = None
 
     def is_read_only_action(self):
         return self.action in ['retrieve', 'list']
 
     def get_permission_classes(self):
         assert self.permission_classes is not None, (
-            "'%s' should either include a `permission_classes` attribute, "
-            "or override the `get_permission_classes()` method."
-            % self.__class__.__name__
+                "'%s' should either include a `permission_classes` attribute, "
+                "or override the `get_permission_classes()` method."
+                % self.__class__.__name__
         )
         return self.permission_classes
 
@@ -64,8 +66,18 @@ class GenericViewSet(DRFGenericViewSet):
         """
         return [permission() for permission in self.get_permission_classes()]
 
-    def get_serializer_class(self):
-        if ObjectRelatedFilterset in self.filter_backends:
-            self.related_object = ObjectRelatedFilterset().get_related_object(self)
-            self.check_object_permissions(self.request, self.related_object)
-        return super().get_serializer_class()
+    def set_related_object(self):
+        self.related_object = ObjectRelatedFilterset().get_related_object(self)
+        self.check_object_permissions(self.request, self.related_object)
+
+
+class CreateModelMixin(DRFCreateModelMixin):
+    def create(self, request, *args, **kwargs):
+        self.set_related_object()
+        return super().create(request, *args, **kwargs)
+
+
+class ListModelMixin(DRFListModelMixin):
+    def list(self, request, *args, **kwargs):
+        self.set_related_object()
+        return super().list(request, *args, **kwargs)

@@ -31,6 +31,7 @@ class TestGetChannelContents(GhasedTestCase):
                 return content
         return None
 
+    @tag('unit_api')
     @open_file_for_test('resources/sample.jpg')
     def test_get_contents(self):
         self.contents_url = self.channel.id

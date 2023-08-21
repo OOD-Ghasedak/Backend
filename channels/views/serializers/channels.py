@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from enum import Enum
 
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from channel_management.models import ChannelOwner, ChannelAdmin
@@ -24,9 +25,14 @@ class ChannelSummarySerializer(BaseChannelSerializer):
 
 
 class ChannelSerializer(BaseChannelSerializer):
-    def __init__(self, ghased, **kwargs):
-        super().__init__(**kwargs)
-        self.ghased = ghased
+    role = serializers.SerializerMethodField()
+
+    @property
+    def ghased(self):
+        return self.context['request'].ghased
+
+    def get_role(self, instance: Channel):
+        return self.obj_to_role(instance.get_ghased_status_wrt_channel(self.ghased))
 
     class Role(Enum):
         OWNER = 'owner'
@@ -36,20 +42,18 @@ class ChannelSerializer(BaseChannelSerializer):
 
     def obj_to_role(self, obj):
         if isinstance(obj, ChannelOwner):
-            return self.Role.OWNER
+            return self.Role.OWNER.value
         if isinstance(obj, ChannelAdmin):
-            return self.Role.ADMIN
+            return self.Role.ADMIN.value
         if isinstance(obj, Subscriber):
-            return self.Role.SUBSCRIBER
-        return self.Role.VIEWER
+            return self.Role.SUBSCRIBER.value
+        return self.Role.VIEWER.value
 
-    def to_representation(self, instance: Channel):
-        return OrderedDict({
-            'id': instance.id,
-            'name': instance.name,
-            'description': instance.description,
-            'role': self.obj_to_role(instance.get_ghased_status_wrt_channel(self.ghased)),
-        })
+    class Meta(BaseChannelSerializer.Meta):
+        fields = [
+            *BaseChannelSerializer.Meta.fields,
+            'role', 'has_subscription',
+        ]
 
 
 class ChannelCreateSerializer(BaseChannelSerializer):
@@ -72,5 +76,5 @@ class ChannelSerializerConfigurer(Configurer[BaseChannelSerializer]):
             self.Mode.CREATE: ChannelCreateSerializer,
         }[self.mode]
 
-    def configure(self, channel: Channel):
-        return self.configure_class()(instance=channel)
+    def configure(self, *args, **kwargs):
+        return self.configure_class()(*args, **kwargs)

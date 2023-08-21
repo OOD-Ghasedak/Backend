@@ -51,10 +51,6 @@ class ChannelsView(
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    def retrieve(self, request, *args, **kwargs):
-        serializer = self.get_serializer_class()(ghased=request.user.ghased)
-        return Response(serializer.data)
-
 
 class SearchChannelPagination(GhasedakPageNumberPagination):
     page_size = 20

@@ -1,15 +1,13 @@
 from rest_framework.filters import OrderingFilter
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, UpdateModelMixin, DestroyModelMixin, \
-    RetrieveModelMixin
+from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin
 from rest_framework.settings import api_settings
-from rest_framework.viewsets import GenericViewSet
 
 from accounts.models import IsGhasedPermission
 from channel_management.models import IsManagerPermission
-from channels.models import ChannelContent, Channel, ContentFile
+from channels.models import ChannelContent, Channel
 from channels.views.serializers import ChannelContentSerializerConfigurer, CreateUpdateChannelContentSerializer
-from channels.views.serializers.channel_contents import CreateContentFileSerializer
-from utility.django_rest_framework import ObjectRelatedFilterset, GhasedakPageNumberPagination
+from utility.django_rest_framework import ObjectRelatedFilterset, GhasedakPageNumberPagination, GenericViewSet, \
+    CreateModelMixin, ListModelMixin
 
 
 class ChannelContentsPagination(GhasedakPageNumberPagination):

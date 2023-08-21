@@ -1,14 +1,11 @@
-
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, DestroyModelMixin
+from rest_framework.mixins import DestroyModelMixin
 from rest_framework.settings import api_settings
-from rest_framework.viewsets import GenericViewSet
-
 
 from accounts.models import IsGhasedPermission
 from channel_management.models import IsOwnerPermission
 from channels.models import Subscription, Channel
 from channels.views.serializers import OwnerSubscriptionSerializer
-from utility.django_rest_framework import ObjectRelatedFilterset
+from utility.django_rest_framework import ObjectRelatedFilterset, GenericViewSet, ListModelMixin, CreateModelMixin
 
 
 class ChannelOwnerSubscriptionsView(
@@ -21,16 +18,16 @@ class ChannelOwnerSubscriptionsView(
     queryset = Subscription.objects.all()
     serializer_class = OwnerSubscriptionSerializer
 
-    def get_permissions(self):
+    def get_permission_classes(self):
         permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission]
         if self.action != 'list':
             permission_classes += [IsOwnerPermission]
-        return [permission() for permission in permission_classes]
+        return permission_classes
 
     def get_serializer_context(self):
         return {
             **super().get_serializer_context(),
-            'channel': Channel.objects.get(id=self.kwargs[self.related_lookup_url_kwarg]),
+            'channel': self.related_object,
         }
 
     def get_serializer(self, *args, **kwargs):
@@ -45,5 +42,3 @@ class ChannelOwnerSubscriptionsView(
     def perform_destroy(self, instances):
         for instance in instances:
             instance.delete()
-
-
