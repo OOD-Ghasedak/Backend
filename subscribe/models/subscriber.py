@@ -1,7 +1,19 @@
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.db.models import UniqueConstraint, Q
+from rest_framework.permissions import BasePermission
 
 from utility.models import CreateHistoryModelMixin, SoftDeleteModelMixin, BaseModel, CreationSensitiveModelMixin
+from utility.models.managers import filter_active_objects
+
+if TYPE_CHECKING:
+    from channels.models import Channel
+
+
+class IsSubscriberPermission(BasePermission):
+    def has_object_permission(self, request, view, obj: 'Channel'):
+        return filter_active_objects(obj.subscribers).filter(request.ghased.id).exists()
 
 
 class Subscriber(CreateHistoryModelMixin, SoftDeleteModelMixin, CreationSensitiveModelMixin, BaseModel):

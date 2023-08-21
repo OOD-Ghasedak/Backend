@@ -1,7 +1,6 @@
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
 from rest_framework.settings import api_settings
-from rest_framework.status import HTTP_405_METHOD_NOT_ALLOWED
 from rest_framework.viewsets import GenericViewSet
 
 from accounts.models import Ghased, IsGhasedPermission
@@ -19,10 +18,7 @@ class GhasedProfileView(
             return GhasedProfilePatchSerializer
         if self.action == 'retrieve':
             return GhasedProfileGetSerializer
-        raise ValidationError(
-            'متد روی این مسیر قابل اجرا نیست!',
-            code=HTTP_405_METHOD_NOT_ALLOWED,
-        )
+        raise MethodNotAllowed(self.request.method)
 
     def get_object(self):
         return self.request.ghased

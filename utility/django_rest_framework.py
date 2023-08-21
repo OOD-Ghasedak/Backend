@@ -1,4 +1,6 @@
 from django.db.models import QuerySet
+from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.generics import get_object_or_404
 from rest_framework.mixins import CreateModelMixin as DRFCreateModelMixin, ListModelMixin as DRFListModelMixin
@@ -67,8 +69,9 @@ class GenericViewSet(DRFGenericViewSet):
         return [permission() for permission in self.get_permission_classes()]
 
     def set_related_object(self):
-        self.related_object = ObjectRelatedFilterset().get_related_object(self)
-        self.check_object_permissions(self.request, self.related_object)
+        if ObjectRelatedFilterset in self.filter_backends:
+            self.related_object = ObjectRelatedFilterset().get_related_object(self)
+            self.check_object_permissions(self.request, self.related_object)
 
 
 class CreateModelMixin(DRFCreateModelMixin):
@@ -81,3 +84,12 @@ class ListModelMixin(DRFListModelMixin):
     def list(self, request, *args, **kwargs):
         self.set_related_object()
         return super().list(request, *args, **kwargs)
+
+
+class ValidationError(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = 'ورودی مورد قبول نیست!'
+
+    def __init__(self, detail=None, status_code=None):
+        self.detail = detail or self.default_detail
+        self.status_code = status_code or self.status_code

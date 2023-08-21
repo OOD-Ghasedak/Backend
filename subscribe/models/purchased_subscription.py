@@ -28,5 +28,5 @@ class PurchasedSubscription(CreateHistoryModelMixin, CreationSensitiveModelMixin
         status.save(update_fields=['expires_at'])
 
     class Meta:
-        verbose_name = 'عضو کانال'
-        verbose_name_plural = 'اعضای کانال‌ها'
+        verbose_name = 'اشتراک خریداری شده'
+        verbose_name_plural = 'اشتراک‌های خریداری شده'

@@ -1,13 +1,19 @@
 from django.urls import path
 
-from subscribe.views import SubscribedChannelsView, SubscriberView, PremiumSubscriberView
+from subscribe.views import SubscribedChannelsView, SubscribeView, PurchasedSubscriptionView, PurchasedContentView
 
 urlpatterns = [
     path('joined-channels/', SubscribedChannelsView.as_view()),
-    path('<int:channel_pk>/subscribe/', SubscriberView.as_view({
+    path('<int:channel_pk>/', SubscribeView.as_view(
+        {
+            'post': 'create',
+            'delete': 'destroy'
+        }
+    )),
+    path('purchased-subscriptions/', PurchasedSubscriptionView.as_view({
         'post': 'create',
     })),
-    path('<int:channel_pk>/subscribe/<int:subscription_pk>/', PremiumSubscriberView.as_view({
+    path('purchased-contents/', PurchasedContentView.as_view({
         'post': 'create',
-    })),
+    }))
 ]

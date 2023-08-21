@@ -20,9 +20,9 @@ class Channel(CreateHistoryModelMixin, UpdateHistoryModelMixin, SoftDeleteModelM
     def get_ghased_status_wrt_channel(self, ghased) -> Optional[Union[ChannelOwner, ChannelAdmin, Subscriber]]:
         if self.owner.ghased_id == ghased.id:
             return self.owner
-        if found_admin := self.admins.filter(ghased_id=ghased.id).first():
+        if found_admin := filter_active_objects(self.admins).filter(ghased_id=ghased.id).first():
             return found_admin
-        if found_subscriber := self.subscribers.filter(ghased_id=ghased.id).first():
+        if found_subscriber := filter_active_objects(self.subscribers).filter(ghased_id=ghased.id).first():
             return found_subscriber
         return None
 

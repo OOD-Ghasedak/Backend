@@ -24,7 +24,11 @@ class ChannelContentsListSerializer(ListSerializer):
     def get_child_for_content(self, content: ChannelContent):
         if content.is_premium and (
                 self.status is None
-                or (isinstance(self.status, Subscriber) and not self.status.subscription_status.is_premium)
+                or (
+                        isinstance(self.status, Subscriber)
+                        and not self.status.subscription_status.is_premium
+                        and not self.status.purchased_contents.filter(content_id=content.id).exists()
+                )
         ):
             return FreeContentSerializer
         return FullFeatureContentSerializer
