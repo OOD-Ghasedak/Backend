@@ -29,6 +29,8 @@ class SecureFileTypeMixin(SecureFileMixinBase):
     def get_validate_file_type(cls, file_field: str):
 
         def validate_file_type(serializer: "Serializer", file: InMemoryUploadedFile, field_name: str):
+            if not file:
+                return
             file.seek(0)
             mime_type = magic.from_buffer(file.read(), mime=True)
             error_template_kwargs = dict(
@@ -89,6 +91,8 @@ class SecureFileNameMixin(SecureFileMixinBase):
     @classmethod
     def get_validate_file_name(cls, file_field: str):
         def validate_file_name(serializer: "Serializer", file: InMemoryUploadedFile, field_name: str):
+            if not file:
+                return
             if is_unsafe(file.name):
                 if cls.security_mode == cls.FILE_NAME_SECURITY_MODE_RAISE:
                     raise ValidationError([
@@ -125,6 +129,8 @@ class SecureFileSizeMixin(SecureFileMixinBase):
         file_size_limit = cls.file_size_limit
 
         def validate_file_name(serializer: "Serializer", file: InMemoryUploadedFile, field_name: str):
+            if not file:
+                return
             file_size = cls._get_file_size(file)
             if file_size > file_size_limit:
                 raise ValidationError([

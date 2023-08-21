@@ -13,8 +13,8 @@ from utility.django_rest_framework import ObjectRelatedFilterset, GhasedakPageNu
 
 
 class ChannelContentsPagination(GhasedakPageNumberPagination):
-    page_size = 10
-    max_page_size = 20
+    page_size = 20
+    max_page_size = 50
 
 
 class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
@@ -37,19 +37,9 @@ class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
         kwargs.setdefault('context', self.get_serializer_context())
         if self.action == 'list':
             return ChannelContentSerializerConfigurer(
-                self.request.ghased, ObjectRelatedFilterset().get_related_object(self),
+                self.request.ghased, self.related_object,
             ).configure(*args, **kwargs)
         return CreateUpdateChannelContentSerializer(*args, **kwargs)
-
-    def get_related_object(self):
-        obj = ObjectRelatedFilterset().get_related_object(self)
-        self.check_object_permissions(self.request, obj)
-        self.related_object = obj
-        return obj
-
-    def create(self, request, *args, **kwargs):
-        self.get_related_object()
-        return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         serializer.save(channel=self.related_object)
@@ -67,41 +57,3 @@ class UpdateDestroyContentsView(UpdateModelMixin, DestroyModelMixin, GenericView
 
     def get_object(self):
         return super(UpdateDestroyContentsView, self).get_object()
-
-
-class CreateContentFileView(RetrieveModelMixin, CreateModelMixin, GenericViewSet):
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [ObjectRelatedFilterset]
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsManagerPermission]
-    object_related_queryset = ChannelContent.objects.all()
-    related_lookup_field = 'content_id'
-    related_lookup_url_kwarg = 'content_pk'
-    queryset = ContentFile.objects.all()
-    serializer_class = CreateContentFileSerializer
-
-    def get_related_object(self):
-        obj = ObjectRelatedFilterset().get_related_object(self)
-        self.check_object_permissions(self.request, obj.channel)
-        self.related_object = obj
-        return obj
-
-    def retrieve(self, request, *args, **kwargs):
-        self.get_related_object()
-        return super().retrieve(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        self.get_related_object()
-        return super().create(request, *args, **kwargs)
-
-    def perform_create(self, serializer):
-        serializer.save(content=self.related_object)
-
-
-class UpdateContentFileView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsManagerPermission]
-    lookup_field = 'id'
-    lookup_url_kwarg = 'pk'
-    queryset = ContentFile.objects.all()
-    serializer_class = CreateContentFileSerializer
-
-    def check_object_permissions(self, request, obj: ContentFile):
-        return super().check_object_permissions(request, obj.content.channel)

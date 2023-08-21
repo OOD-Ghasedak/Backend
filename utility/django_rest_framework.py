@@ -2,6 +2,7 @@ from django.db.models import QuerySet
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import GenericViewSet as DRFGenericViewSet
 
 
 class ObjectRelatedFilterset(BaseFilterBackend):
@@ -42,3 +43,29 @@ class GhasedakPageNumberPagination(PageNumberPagination):
     page_size_query_param = 'page-size'
     page_size = 10
     max_page_size = 100
+
+
+class GenericViewSet(DRFGenericViewSet):
+
+    def is_read_only_action(self):
+        return self.action in ['retrieve', 'list']
+
+    def get_permission_classes(self):
+        assert self.permission_classes is not None, (
+            "'%s' should either include a `permission_classes` attribute, "
+            "or override the `get_permission_classes()` method."
+            % self.__class__.__name__
+        )
+        return self.permission_classes
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        return [permission() for permission in self.get_permission_classes()]
+
+    def get_serializer_class(self):
+        if ObjectRelatedFilterset in self.filter_backends:
+            self.related_object = ObjectRelatedFilterset().get_related_object(self)
+            self.check_object_permissions(self.request, self.related_object)
+        return super().get_serializer_class()
