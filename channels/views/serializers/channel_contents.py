@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.files import File
 from django.db import transaction
 from django.db.models import Manager
 from rest_framework import serializers
@@ -113,6 +114,63 @@ class ChannelContentSerializerConfigurer(Configurer[ChannelContentSerializer]):
         return ChannelContentSerializer(*args, **kwargs)
 
 
+class CreateUpdateChannelContentSerializer(ModelSerializer, metaclass=ConfiguredSecuredFileSerializerMeta):
+    price = serializers.IntegerField(default=0)
+    file = serializers.FileField(required=False, allow_null=True)
+    securing_file_fields = ['file']
+    accepted_mime_types = settings.ACCEPTED_MIME_TYPES['content_file']
+    file_size_limit = settings.ACCEPTED_FILE_SIZES['content_file'] * (1 << 20)
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            file = validated_data.pop('file', None)
+            content: ChannelContent = super().create(validated_data)
+            if file:
+                ContentFile.objects.create(
+                    content=content,
+                    file=file,
+                    file_type=ContentFile.ContentFileTypes.from_mime_type(
+                        self.context[self.__class__.file_security_context_key]['file_type']
+                    )
+                )
+            return content
+
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            update_or_delete = 'file' in validated_data
+            file = validated_data.pop('file', None)
+            content: ChannelContent = super().update(instance, validated_data)
+            if update_or_delete:
+                if content.file is not None:
+                    if file:
+                        content_file: ContentFile = content.file
+                        content_file.file = File(file)
+                        content_file.file_type = ContentFile.ContentFileTypes.from_mime_type(
+                            self.context[self.__class__.file_security_context_key]['file_type']
+                        )
+                        content_file.save(update_fields=['file', 'file_type'])
+                    else:
+                        content_file: ContentFile = content.file
+                        content_file.delete()
+                        content.refresh_file()
+                else:
+                    if file:
+                        ContentFile.objects.create(
+                            content=content,
+                            file=file,
+                            file_type=ContentFile.ContentFileTypes.from_mime_type(
+                                self.context[self.__class__.file_security_context_key]['file_type']
+                            )
+                        )
+            return content
+
+    class Meta:
+        model = ChannelContent
+        fields = [
+            'title', 'summary', 'price', 'text', 'file'
+        ]
+
+
 class CreateContentFileSerializer(ModelSerializer, metaclass=ConfiguredSecuredFileSerializerMeta):
     securing_file_fields = ['file']
     accepted_mime_types = settings.ACCEPTED_MIME_TYPES['content_file']
@@ -129,12 +187,4 @@ class CreateContentFileSerializer(ModelSerializer, metaclass=ConfiguredSecuredFi
         fields = [
             'id',
             'file',
-        ]
-
-
-class CreateUpdateChannelContentSerializer(ModelSerializer):
-    class Meta:
-        model = ChannelContent
-        fields = [
-            'title', 'summary', 'price', 'text',
         ]

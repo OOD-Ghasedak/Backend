@@ -2,24 +2,22 @@ from django.urls import path
 
 from channels.views import (
     ChannelOwnerSubscriptionsView,
-    CreateChannelView,
+    ChannelsView,
     SearchChannelView,
     CreateListContentsView,
     UpdateDestroyContentsView,
-    CreateContentFileView,
-    UpdateContentFileView,
+    ChannelAdminsView,
 )
 
 urlpatterns = [
-    path('create/', CreateChannelView.as_view({
+    path('create/', ChannelsView.as_view({
         'post': 'create',
     })),
-    path('<int:pk>/update/', CreateChannelView.as_view({
+    path('<int:pk>/', ChannelsView.as_view({
+        'get': 'retrieve',
         'put': 'update',
         'patch': 'partial_update',
-    })),
-    path('<int:channel_pk>/', CreateChannelView.as_view({
-        'get': 'retrieve',
+        'delete': 'destroy',
     })),
     path('<int:channel_pk>/subscriptions/', ChannelOwnerSubscriptionsView.as_view({
         'post': 'create',
@@ -38,12 +36,7 @@ urlpatterns = [
         'patch': 'partial_update',
         'delete': 'destroy'
     })),
-    path('contents/<int:content_pk>/files/', CreateContentFileView.as_view({
-        'post': 'create',
-        'get': 'retrieve'
-    })),
-    path('contents/files/<int:pk>/', UpdateContentFileView.as_view({
-        'put': 'update',
-        'delete': 'destroy',
-    })),
+    path('<int:channel_pk>/admins/', ChannelAdminsView.as_view({
+        'get': 'list',
+    }))
 ]

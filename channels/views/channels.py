@@ -1,32 +1,41 @@
 from django.db import transaction
 from rest_framework import filters, status
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin, RetrieveModelMixin, \
+    DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_framework.viewsets import GenericViewSet
 
 from accounts.models import IsGhasedPermission
 from channel_management.models import IsManagerPermission
 from channel_management.models.services.channel_manager_creation import ChannelManagerCreatorConfigurer, ManagerData
 from channels.models import Channel
 from channels.views.serializers import BaseChannelSerializer, ChannelSerializerConfigurer
-from utility.django_rest_framework import GhasedakPageNumberPagination
+from utility.django_rest_framework import GhasedakPageNumberPagination, GenericViewSet
 
 
-class CreateChannelView(
-    RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, GenericViewSet,
+class ChannelsView(
+    DestroyModelMixin, RetrieveModelMixin, UpdateModelMixin, CreateModelMixin, GenericViewSet,
 ):
     lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
     queryset = Channel.objects.all()
     permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [
         IsGhasedPermission,
-        IsManagerPermission,
     ]
+
+    def get_permission_classes(self):
+        added_permissions = []
+        if not self.is_read_only_action():
+            added_permissions += [IsManagerPermission]
+        return [
+            *self.permission_classes,
+            *added_permissions,
+        ]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return ChannelSerializerConfigurer(
-                mode=ChannelSerializerConfigurer.Mode.GHASED_VIEW
+                mode=ChannelSerializerConfigurer.Mode.FULL
             ).configure_class()
         return ChannelSerializerConfigurer(
             mode=ChannelSerializerConfigurer.Mode.CREATE
@@ -61,5 +70,5 @@ class SearchChannelView(ListModelMixin, GenericViewSet):
         IsGhasedPermission,
     ]
     serializer_class: BaseChannelSerializer = ChannelSerializerConfigurer(
-        mode=ChannelSerializerConfigurer.Mode.SUMMARY
+        mode=ChannelSerializerConfigurer.Mode.FULL
     ).configure_class()
