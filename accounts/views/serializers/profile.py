@@ -8,33 +8,18 @@ from utility.functions import get_dict_subset
 
 
 class GhasedProfilePatchSerializer(ModelSerializer):
-    email = serializers.EmailField(source='user.email')
-
-    def update(self, instance: Ghased, validated_data):
-        with transaction.atomic():
-            user_serializer = UserSerializerFactory(self.Meta.user_fields).get_serializer()(
-                instance=instance.user,
-                data=get_dict_subset(validated_data, self.Meta.user_fields, False),
-                partial=True,
-            )
-            user_serializer.is_valid(raise_exception=True)
-            user_serializer.save()
-            return super().update(instance, validated_data)
 
     class Meta:
         model = Ghased
-        user_fields = []
         fields = [
             'id',
             'phone_number',
             'email',
-            *user_fields,
         ]
 
 
 class GhasedProfileGetSerializer(ModelSerializer):
     username = serializers.CharField(source='user.username')
-    email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = Ghased

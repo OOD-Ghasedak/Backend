@@ -18,4 +18,5 @@ class TestGhasedProfile(GhasedTestCase):
             HTTP_AUTHORIZATION=self.jwt_token,
             assert_status_code=200,
         ).json()
-        self.assertEqual(data['email'], self.ghased.user.email)
+        self.assertEqual(data['email'], self.ghased.email)
+        self.assertEqual(data['phone_number'], self.ghased.phone_number)

@@ -66,7 +66,7 @@ class SecureFileNameMixin(SecureFileMixinBase):
     @classmethod
     def find_file_extension(cls, serializer: "Serializer", file: InMemoryUploadedFile):
         serializer_context: dict = getattr(serializer, 'context', {})
-        mime_type = serializer_context.get(cls.context_key, {}).get('file_type')
+        mime_type = serializer_context.get(cls.file_security_context_key, {}).get('file_type')
         if mime_type:
             return mime_type.split('/')[-1]
         extension = file.name.split('.')[-1]
