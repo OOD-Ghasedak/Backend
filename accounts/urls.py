@@ -1,6 +1,12 @@
 from django.urls import path
 
-from accounts.views import GhasedLoginView, GhasedSignUpView, GhasedProfileView, VerifyForRegisterView
+from accounts.views import (
+    GhasedLoginView,
+    GhasedSignUpView,
+    GhasedProfileView,
+    VerifyForRegisterView,
+    ChangePasswordView,
+)
 
 urlpatterns = [
     path('login/', GhasedLoginView.as_view()),
@@ -12,4 +18,5 @@ urlpatterns = [
         'get': 'retrieve',
         'patch': 'partial_update',
     })),
+    path('change-password/', ChangePasswordView.as_view())
 ]
