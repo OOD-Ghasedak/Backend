@@ -1,1 +1,2 @@
 from .test_managed_channels import TestManagedChannels
+from .test_manage_admins import TestManagedAdmin

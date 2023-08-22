@@ -1,1 +1,2 @@
 from .managed_channels import ManagedChannelsView
+from .manage_admins import CreateAdminsView, DestroyUpdateAdminsView
