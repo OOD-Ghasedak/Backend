@@ -9,7 +9,6 @@ from utility.models.managers import filter_active_objects
 
 if TYPE_CHECKING:
     from channels.models import Channel
-    from financial.models import Transaction, Wallet
 
 
 class IsOwnerPermission(BasePermission):
@@ -26,6 +25,7 @@ class ChannelOwner(ChannelManager):
     )
 
     def pay_to_admins(self, transaction: 'Transaction'):
+        from financial.models import Transaction, Wallet
         entry = transaction.entries.filter(wallet__ghased_id=self.ghased_id).first()
         admins_to_pay = filter_active_objects(self.channel.admins).filter(share__isnull=False)
         wallets = Wallet.objects.filter(ghased_id__in=admins_to_pay.values_list('ghased', flat=True))
