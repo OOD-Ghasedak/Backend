@@ -34,7 +34,8 @@ urlpatterns = [
     path('contents/<int:pk>/', UpdateDestroyContentsView.as_view({
         'put': 'update',
         'patch': 'partial_update',
-        'delete': 'destroy'
+        'delete': 'destroy',
+        'get': 'retrieve',
     })),
     path('<int:channel_pk>/admins/', ChannelAdminsView.as_view({
         'get': 'list',

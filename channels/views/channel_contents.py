@@ -1,5 +1,5 @@
 from rest_framework.filters import OrderingFilter
-from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin
+from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin, RetrieveModelMixin
 from rest_framework.settings import api_settings
 
 from accounts.models import IsGhasedPermission
@@ -33,7 +33,7 @@ class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
 
     def get_serializer(self, *args, **kwargs):
         kwargs.setdefault('context', self.get_serializer_context())
-        if self.action == 'list':
+        if self.is_read_only_action():
             return ChannelContentSerializerConfigurer(
                 self.request.ghased, self.related_object,
             ).configure(*args, **kwargs)
@@ -43,12 +43,26 @@ class CreateListContentsView(ListModelMixin, CreateModelMixin, GenericViewSet):
         serializer.save(channel=self.related_object)
 
 
-class UpdateDestroyContentsView(UpdateModelMixin, DestroyModelMixin, GenericViewSet):
-    permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission, IsManagerPermission]
+class UpdateDestroyContentsView(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericViewSet):
     lookup_field = 'id'
     lookup_url_kwarg = 'pk'
     queryset = ChannelContent.objects.all()
     serializer_class = CreateUpdateChannelContentSerializer
+
+    def get_permission_classes(self):
+        permission_classes = api_settings.DEFAULT_PERMISSION_CLASSES + [IsGhasedPermission]
+        if not self.is_read_only_action():
+            permission_classes += [IsManagerPermission]
+        return permission_classes
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs.setdefault('context', self.get_serializer_context())
+        instance = args[0]
+        if self.is_read_only_action():
+            return ChannelContentSerializerConfigurer(
+                self.request.ghased, instance.channel,
+            ).configure(*args, **kwargs)
+        return CreateUpdateChannelContentSerializer(*args, **kwargs)
 
     def check_object_permissions(self, request, obj):
         return super(UpdateDestroyContentsView, self).check_object_permissions(request, obj.channel)

@@ -12,34 +12,34 @@ from utility.api_file_handling import ConfiguredSecuredFileSerializerMeta
 from utility.services import Configurer
 
 
-class ChannelContentsListSerializer(ListSerializer):
-
-    def update(self, instance, validated_data):
-        raise NotImplementedError
-
-    @property
-    def status(self):
-        return self.context['status']
-
-    def get_child_for_content(self, content: ChannelContent):
-        if content.is_premium and (
-                self.status is None
-                or (
-                        isinstance(self.status, Subscriber)
-                        and not self.status.subscription_status.is_premium
-                        and not self.status.purchased_contents.filter(content_id=content.id).exists()
-                )
-        ):
-            return FreeContentSerializer
-        return FullFeatureContentSerializer
-
-    def to_representation(self, data):
-        iterable = data.all() if isinstance(data, Manager) else data
-        result = []
-        for item in iterable:
-            child = self.get_child_for_content(item)(item, context=self.context)
-            result.append(child.data)
-        return result
+# class ChannelContentsListSerializer(ListSerializer):
+#
+#     def update(self, instance, validated_data):
+#         raise NotImplementedError
+#
+#     @property
+#     def status(self):
+#         return self.context['status']
+#
+#     def get_child_for_content(self, content: ChannelContent):
+#         if content.is_premium and (
+#                 self.status is None
+#                 or (
+#                         isinstance(self.status, Subscriber)
+#                         and not self.status.subscription_status.is_premium
+#                         and not self.status.purchased_contents.filter(content_id=content.id).exists()
+#                 )
+#         ):
+#             return FreeContentSerializer
+#         return FullFeatureContentSerializer
+#
+#     def to_representation(self, data):
+#         iterable = data.all() if isinstance(data, Manager) else data
+#         result = []
+#         for item in iterable:
+#             child = self.get_child_for_content(item)(item, context=self.context)
+#             result.append(child.data)
+#         return result
 
 
 class ChannelContentSerializer(ModelSerializer):
@@ -52,14 +52,17 @@ class ChannelContentSerializer(ModelSerializer):
         except AttributeError:
             return 'text'
 
+    def to_representation(self, instance):
+        if not self.__class__ == ChannelContentSerializer:
+            return super().to_representation(instance)
+        serializer_class = self.context['child_decider'](instance)
+        serializer = serializer_class(instance, context=self.context)
+        return serializer.data
+
     class Meta:
         model = ChannelContent
-        fields = [
-            'id',
-            'content_type',
-            'complete_content',
-        ]
-        list_serializer_class = ChannelContentsListSerializer
+        fields = []
+        # list_serializer_class = ChannelContentsListSerializer
 
 
 class FreeContentSerializer(ChannelContentSerializer):
@@ -69,8 +72,10 @@ class FreeContentSerializer(ChannelContentSerializer):
 
     class Meta(ChannelContentSerializer.Meta):
         fields = [
+            'id',
             'title', 'summary', 'is_premium', 'price',
-            *ChannelContentSerializer.Meta.fields,
+            'content_type',
+            'complete_content',
         ]
 
 
@@ -99,8 +104,10 @@ class FullFeatureContentSerializer(ChannelContentSerializer):
 
     class Meta(ChannelContentSerializer.Meta):
         fields = [
+            'id',
             'title', 'summary', 'is_premium', 'price', 'text',
-            *ChannelContentSerializer.Meta.fields,
+            'content_type',
+            'complete_content',
         ]
 
 
@@ -113,8 +120,25 @@ class ChannelContentSerializerConfigurer(Configurer[ChannelContentSerializer]):
     def configure_class(self):
         raise NotImplementedError
 
+    def get_serializer_decider(self):
+        def get_child_for_content(content: ChannelContent):
+            status = self.channel.get_ghased_status_wrt_channel(self.ghased)
+            if content.is_premium and (
+                    status is None
+                    or (
+                            isinstance(status, Subscriber)
+                            and not status.subscription_status.is_premium
+                            and not status.purchased_contents.filter(content_id=content.id).exists()
+                    )
+            ):
+                return FreeContentSerializer
+            return FullFeatureContentSerializer
+
+        return get_child_for_content
+
     def configure(self, *args, **kwargs):
-        kwargs['context'].update(dict(status=self.channel.get_ghased_status_wrt_channel(self.ghased)))
+        decider = self.get_serializer_decider()
+        kwargs['context'].update(dict(child_decider=decider))
         return ChannelContentSerializer(*args, **kwargs)
 
 
