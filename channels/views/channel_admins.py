@@ -4,6 +4,7 @@ from rest_framework.settings import api_settings
 from accounts.models import IsGhasedPermission
 from channel_management.models import ChannelAdmin, IsOwnerPermission
 from channels.models import Channel
+from channels.views.serializers import ChannelAdminSerializer
 from utility.django_rest_framework import GenericViewSet, ObjectRelatedFilterset
 
 
@@ -14,6 +15,6 @@ class ChannelAdminsView(ListModelMixin, GenericViewSet):
     related_lookup_field = 'channel_id'
     related_lookup_url_kwarg = 'channel_pk'
     queryset = ChannelAdmin.objects.all()
-    serializer_class = None  # TODO
+    serializer_class = ChannelAdminSerializer
 
 
