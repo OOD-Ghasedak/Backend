@@ -7,6 +7,7 @@ from channels.views import (
     CreateListContentsView,
     UpdateDestroyContentsView,
     ChannelAdminsView,
+    ChannelSubscribersView,
 )
 
 urlpatterns = [
@@ -38,6 +39,9 @@ urlpatterns = [
         'get': 'retrieve',
     })),
     path('<int:channel_pk>/admins/', ChannelAdminsView.as_view({
+        'get': 'list',
+    })),
+    path('<int:channel_pk>/subscribers/', ChannelSubscribersView.as_view({
         'get': 'list',
     }))
 ]

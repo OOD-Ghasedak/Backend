@@ -4,4 +4,4 @@ from .channel_contents import (
     CreateListContentsView,
     UpdateDestroyContentsView,
 )
-from .channel_admins import ChannelAdminsView
+from .channel_members import ChannelAdminsView, ChannelSubscribersView
