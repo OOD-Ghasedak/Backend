@@ -12,6 +12,8 @@ services:
       - "8000:8000"
 
   db:
+    env_file:
+      - .env
     image: postgres:13.6-bullseye
     ports:
       - "5432:5432"
